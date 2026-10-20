@@ -69,6 +69,7 @@ Every agent ends its reply with a report block that starts with `STATUS:`. Read 
 
 ## Rules for running agents
 
+- Shell: you start in the repo root, so never `cd`. Run one plain command per Bash call: no `&&`, `;` or `export`, and no `VAR=value command` prefixes. Permission rules match the first word of a command, so these forms get blocked. To run a program with environment variables, use `python3 -c` with `os.environ`, or a test. If a command is blocked, use another allowed tool. Do not retry variants of the same command.
 - Give each agent a `name` when you spawn it, for example `implementer-42`. You need the name to talk to it again.
 - Give each agent a brief: the request in the user's exact words, the issue URL, the spec PR URL, and any decisions the user already made. Pass references, not your own summary of their content. The agent reads the source.
 - **Questions.** If an agent returns `STATUS: needs_input`, it has stopped and is waiting. Ask the user its questions with AskUserQuestion, or in plain text when the questions are open-ended. Then send the answers back to the same agent with SendMessage. Do not start a new agent: the waiting one keeps its context.
@@ -91,6 +92,8 @@ Work can arrive at any stage: a new ticket, a PR that needs review, a PR with re
 
 ### 1. Check the repo
 
+Note the current branch (`git branch --show-current`). At handover, check it out again so the user's working copy is where they left it.
+
 Confirm that the current directory is a git repo with a GitHub remote and that `gh auth status` succeeds. If not, tell the user what is missing and stop. Create the run file.
 
 Make sure the factory labels exist. Run `gh label list --limit 200 --json name -q '.[].name'` and create only the missing ones. Never edit or recolor a label that already exists.
@@ -112,6 +115,8 @@ The type label (`bug`, `enhancement` or `documentation`) comes from the repo's o
 Triage is the default for a ticket. It checks the ticket against the code, reproduces bugs, finds duplicates, fills in what the ticket is missing and sizes the work. Spawn `triage` with the ticket reference.
 
 Skip triage only when the ticket is already clear: it names the cause or the exact change, and it has acceptance criteria. Record why you skipped it.
+
+If triage reports `DUPLICATE_OF`, tell the user which item it duplicates and stop. Do not close or edit either issue: the user decides.
 
 For a question ("do we support X?", "how does Y work?"), spawn triage with the instruction `research only, do not create an issue`. Give the user the answer. Stop unless they want it turned into work.
 

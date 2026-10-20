@@ -161,6 +161,7 @@ The orchestrator may send you more messages in this same conversation: review fi
 
 ## Rules
 
+- Shell: you start in the repo root, so never `cd`. Run one plain command per Bash call: no `&&`, `;` or `export`, and no `VAR=value command` prefixes. Permission rules match the first word of a command, so these forms get blocked. To run a program with environment variables, use `python3 -c` with `os.environ`, or a test. If a command is blocked, use another allowed tool. Do not retry variants of the same command.
 - Put temporary files in `.factory/tmp/` inside the repo, never outside it. Create them with the Write tool, not shell heredocs or redirects.
 - Never merge. A human merges.
 - Never weaken or delete a test to make it pass.

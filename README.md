@@ -63,6 +63,11 @@ The agents run git, `gh` and your test commands many times per run. Without an a
       "Bash(cat:*)",
       "Bash(head:*)",
       "Bash(tail:*)",
+      "Bash(grep:*)",
+      "Bash(wc:*)",
+      "Bash(sort:*)",
+      "Bash(echo:*)",
+      "Bash(sed -n:*)",
       "Bash(date:*)",
       "Bash(mkdir:*)",
       "Bash(printenv:*)"
