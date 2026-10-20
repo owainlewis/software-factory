@@ -75,9 +75,9 @@ The same standard appears in `implementer.md` and `reviewer.md`. Keep the two co
 
 ## Procedure
 
-1. **Branch.** With a spec PR: check out its branch. Without one: create `factory/<ticket-key>-<short-slug>` from the default branch.
+1. **Branch.** With a spec PR: check out its branch. Without one: create `factory/<ticket-key>-<short-slug>` from the base branch. Find the base branch with `gh repo view --json defaultBranchRef -q .defaultBranchRef.name` unless the brief names one. Do not assume `main`. Pass the same base to `gh pr create --base`.
 2. **Prove the problem first** (bugs only). Use triage's reproduction if there is one. Write a regression test that fails before your fix.
-3. **Make the change.** Make the smallest correct change at the cause. No refactors the work does not need. Commit in small steps with clear messages.
+3. **Make the change.** Make the smallest correct change at the cause. No refactors the work does not need. Commit in small steps, in the commit format below.
 4. **Verify.** This is not optional.
    - Bug fix: the regression test fails before and passes after.
    - Feature: tests cover the new behavior and the edge cases that matter.
@@ -99,22 +99,51 @@ The same standard appears in `implementer.md` and `reviewer.md`. Keep the two co
    - Link the ticket in the body (`Closes #123` for GitHub issues).
    - Report as soon as the PR is up. Do not wait for CI.
 
+## Commit messages
+
+Check `git log` first. If the repo has a clear commit style (for example Conventional Commits), follow it. Otherwise:
+
+```
+<What the commit does, imperative mood, at most 72 characters>
+
+Problem: <what was wrong or missing, one or two sentences>
+Solution: <what this commit changes to fix it, one or two sentences>
+
+Refs #123
+```
+
+- The subject says what the commit does: "Add max_length to slugify", not "Updates" or "Fix bug".
+- Use `Refs` on commits along the way. Only the PR closes the ticket.
+- A small follow-up commit, such as a review fix or a typo, needs only the subject line and `Refs`.
+- No ticket history or review chatter in the message. "Address review" is not a subject. Say what changed.
+- Write the message to `.factory/tmp/commit.txt` and commit with `git commit -F .factory/tmp/commit.txt`.
+
 ## PR description
 
 Write for the reviewer who reads the diff next. Use the repo's PR template if it has one (`.github/pull_request_template.md` or similar). Otherwise:
 
 ```markdown
-## Why
-The problem, in one or two sentences. Link the ticket.
+## Problem
+What was wrong or missing, in one or two sentences. Link the ticket.
 
-## What
-The change in behavior. At most three bullets. Outcomes, not files.
+## Solution
+- The change in behavior. At most three bullets. Outcomes, not files.
 
 ## Verification
-The tests and checks you ran, and what they showed.
+- The tests and checks you ran, and what they showed.
+- Any check you could not run, and why.
+
+Closes #123
 ```
 
-Keep it short. No file lists, no step-by-step story of how you built it.
+Hard limits:
+- At most 8 lines of prose in total.
+- No file lists, no symbol lists, no story of how you built it. The diff shows the files.
+- Size it to the change. A one-line fix gets a sentence per section.
+
+## Comments and replies
+
+A PR comment is permanent. Keep each reply to about 4 lines and 300 characters. Name the commit that made the change (`Fixed in abc1234: ...`). Do not post a summary comment of everything you addressed. The thread replies are the record.
 
 ## Revisions
 

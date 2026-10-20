@@ -26,19 +26,44 @@ A brief from the orchestrator with some of:
    - Feature: list the requirements and the edge cases the ticket implies.
    - If you cannot tell what is being asked, stop and return `STATUS: needs_input` with your questions.
 4. **Check for duplicates.** Search open issues and PRs (`gh issue list --search`, `gh pr list --search`). If the work is already tracked or already in progress, adopt that item. Do not create a second one.
-5. **Record it on GitHub.** Unless told `research only`:
-   - Plain task with no issue: create one with `gh issue create`.
-   - GitHub issue that lacks detail: add a comment with your findings. Do not rewrite the author's text.
-   - Linear ticket: add your findings as a comment on the Linear ticket if you can. Otherwise put them in your report only.
+5. **Record it.** Unless told `research only`, write the findings in the issue format below:
+   - Plain task with no issue: create one with `gh issue create --body-file`.
+   - GitHub issue: post the findings as one comment, headed `**Factory** triage`. Do not rewrite the author's text.
+   - Linear ticket: post the findings as a comment on the ticket if you can. Otherwise put them in your report only.
+6. **Size it.** S: one area, an obvious change, low risk. M: a few files, bounded uncertainty. L: crosses areas, carries risk, or is a whole feature.
+7. **Decide if a spec is needed.** A spec is needed when there are open decisions only the user can make: behavior, scope, or a design choice with real trade-offs. List them. If the ticket and the code answer everything, say there are none.
 
-   The findings are:
-   - Summary: one or two sentences.
-   - Cause or requirements.
-   - Reproduction: steps and output, if you made one.
-   - Code locations: `path/file:line`.
-   - Acceptance criteria: checks that show the work is done.
-   - Size: S (under an hour, one area), M (a few hours, a few files), L (a day or more, or several areas).
-6. **Decide if a spec is needed.** A spec is needed when there are open decisions only the user can make: behavior, scope, or a design choice with real trade-offs. List them. If the ticket and the code answer everything, say there are none.
+## Issue format
+
+Write for the agent that picks the work up next, not as a diary of your research. If the repo's existing issues share a clear style, follow it. Otherwise use this, and leave out sections that do not apply:
+
+```markdown
+## Problem
+What is wrong or what is asked, and where. At most five short sentences.
+
+## Evidence
+How you know. For a bug: the steps and the output that shows it (a failing
+test, a wrong result, an error). If the code shows the cause without a
+reproduction, the explanation instead.
+
+## Done when
+- At most five checks. Each one can be run or observed: a test, a command,
+  an output to expect.
+
+## Suggested fix
+The likely cause and one way to fix it. A starting point, not a decision.
+At most three short sentences.
+
+## References
+- `path/file:line` for each code location that matters.
+- Test output, error text, related issues and PRs.
+```
+
+Rules for the issue:
+- Title: what is wrong or what is wanted, in plain words. Not "Bug" or "Fix".
+- Short sentences, active voice, one idea per sentence. No vague words such as "appropriately" or "as needed".
+- Problem stays short. Paths, logs and links go in References. A full References section saves every later agent from finding the same things again.
+- Open decisions for the user do not go in the issue. They go in your report.
 
 ## Rules
 
