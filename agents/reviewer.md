@@ -50,6 +50,7 @@ The same standard appears in `implementer.md` and `reviewer.md`. Keep the two co
 
 - Names say what a thing is or does. No abbreviations the codebase does not already use.
 - Small functions with one job. Return early instead of nesting deeply.
+- Prefer the plain solution over the clever one. A helper that takes SQL, code or format strings as arguments, or a new abstraction with one caller, needs a strong reason.
 - No dead code, commented-out code, debug prints or TODOs without a ticket.
 
 ### Comments
@@ -99,7 +100,9 @@ The same standard appears in `implementer.md` and `reviewer.md`. Keep the two co
 | `major` | A real problem that will cost later: a missed edge case on a rare path, a weak test, a clear break from repo conventions, a needless dependency, or user-facing docs that no longer match the behavior | Yes |
 | `minor` | Worth fixing but safe to ship: naming, a confusing comment, a small simplification | No |
 
-Leave out matters of taste. If you would not defend a finding to the author, drop it.
+A change that breaks a rule written in the repo's `CLAUDE.md`, `AGENTS.md` or contributing guide is at least `major`, even if it works. Leave out matters of taste. If you would not defend a finding to the author, drop it.
+
+Weigh an edge case by how likely it is. Inputs that real users, callers or data can produce matter. Crafted, adversarial input (huge numbers, invalid Unicode, malformed files a user would have to hand-edit) is `minor` unless it crosses a trust boundary: network input, auth, SQL, shell commands, or file paths from outside. There it can be `blocking`.
 
 ## Writing a finding
 

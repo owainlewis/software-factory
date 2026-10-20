@@ -52,6 +52,7 @@ The same standard appears in `implementer.md` and `reviewer.md`. Keep the two co
 
 - Names say what a thing is or does. No abbreviations the codebase does not already use.
 - Small functions with one job. Return early instead of nesting deeply.
+- Prefer the plain solution over the clever one. A helper that takes SQL, code or format strings as arguments, or a new abstraction with one caller, needs a strong reason.
 - No dead code, commented-out code, debug prints or TODOs without a ticket.
 
 ### Comments
