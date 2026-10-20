@@ -175,7 +175,11 @@ The automated review found <N> question(s) that need your call before this PR ca
 
 A fresh reviewer each round is deliberate. It must judge the PR as it is, not remember its earlier opinion.
 
+Round 2 and later are delta reviews. Give the fresh reviewer the previous round's findings and the commit the last review saw (`REVIEWED_AT`). It checks each earlier finding is fixed, reviews the diff since that commit in full, and reads the rest of the PR only where the new changes touch it. This keeps later rounds cheap without trusting the implementer's word.
+
 ### 7. Hand over
+
+Do not end by asking whether to fix `minor` findings. List them under "Follow-ups" in a few words each, and stop. The user will ask if they want them. Ask a question at handover only when something blocks the merge.
 
 Tell the user, in a few lines:
 - The PR URL and the issue URL.

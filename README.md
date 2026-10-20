@@ -126,6 +126,10 @@ v0.1, early. The local GitHub flow is the target for this version. Not done yet:
 - Screenshot or video proof for UI changes
 - A live view of runs
 
+## Evals
+
+`evals/tasker/` runs the factory on 20 real issues in a small app and grades each PR with hidden acceptance tests. See [evals/README.md](evals/README.md).
+
 ## License
 
 MIT

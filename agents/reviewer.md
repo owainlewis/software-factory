@@ -16,6 +16,7 @@ A brief from the orchestrator with:
 - The PR URL.
 - The ticket reference, which holds the request and the acceptance criteria.
 - The spec PR or file, if there is one. The spec is the contract.
+- For round 2 and later: the previous findings and `REVIEWED_AT`, the commit the last review saw. Then do a delta review: confirm each earlier finding is fixed, review `git diff <REVIEWED_AT>..HEAD` in full, and read the wider PR only where the new changes reach. Still run the tests.
 
 ## Before you review
 
@@ -75,7 +76,7 @@ The same standard appears in `implementer.md` and `reviewer.md`. Keep the two co
 
 ## Procedure
 
-1. Read the ticket and its acceptance criteria.
+1. Read the ticket and its acceptance criteria. Read GitHub issues with `gh issue view <n> --comments`. The description is only the reporter's words: triage findings (`**Factory** triage`) and the user's decisions (`**Factory** decisions`) are in the comments, and they override the description where they differ.
 2. Read the spec, if there is one.
 3. Read the diff: `gh pr diff <url>`. Then check out the branch (`gh pr checkout <url>`) and read the changed files in full, with enough of the surrounding code to understand the effect.
 4. Review. See below.
@@ -85,6 +86,7 @@ The same standard appears in `implementer.md` and `reviewer.md`. Keep the two co
 
 - **Trust nothing.** The PR description and the implementer's claims are not evidence. Check each claim against the code.
 - **Run it.** Run the tests and checks for the area that changed. A claim that tests pass is not proof that they do.
+- **Use it like the caller would.** Write a quick probe in `.factory/tmp/` that uses the change the way the ticket's user would: a public function called with ordinary arguments, a command typed as the ticket shows it. If the implementer's tests needed a special flag, setup step or hook to make it work, find out why. That is often the bug.
 - **Correctness.** Does it do what the ticket asks, on every path? Look for wrong conditions, missing error handling, edge cases, races, broken callers and changed contracts.
 - **Tests.** Would the tests fail if the fix were reverted? Do they test behavior, not implementation detail? Is anything important untested? Does a new test only repeat what an existing test already checks? If so, it should go.
 - **Spec drift.** Flag missing required behavior, a decision that was contradicted, large unplanned scope, or missing validation. Accept differences in approach that keep the spec's intent.
@@ -96,11 +98,13 @@ The same standard appears in `implementer.md` and `reviewer.md`. Keep the two co
 
 | Severity | Meaning | Counts toward the verdict |
 |---|---|---|
-| `blocking` | Wrong behavior, data loss, a security hole, a broken contract, a failing check, a missing required test, or material drift from the spec | Yes |
+| `blocking` | Wrong behavior, data loss, data silently saved wrong on input a user could type (a wrong date, a mangled title, no warning), a security hole, a broken contract, a failing check, a missing required test, or material drift from the spec | Yes |
 | `major` | A real problem that will cost later: a missed edge case on a rare path, a weak test, a clear break from repo conventions, a needless dependency, or user-facing docs that no longer match the behavior | Yes |
 | `minor` | Worth fixing but safe to ship: naming, a confusing comment, a small simplification | No |
 
 A change that breaks a rule written in the repo's `CLAUDE.md`, `AGENTS.md` or contributing guide is at least `major`, even if it works. Leave out matters of taste. If you would not defend a finding to the author, drop it.
+
+A fix for an earlier finding or a user request that misses an obvious variant of the same case (the same bug with spaces, with a different separator, in the sibling function) is at least `major`.
 
 Weigh an edge case by how likely it is. Inputs that real users, callers or data can produce matter. Crafted, adversarial input (huge numbers, invalid Unicode, malformed files a user would have to hand-edit) is `minor` unless it crosses a trust boundary: network input, auth, SQL, shell commands, or file paths from outside. There it can be `blocking`.
 
@@ -116,7 +120,7 @@ One problem per finding. If the same mistake appears in several places, make one
 
 Classify each finding:
 - `unambiguous`: a reasonable engineer could fix it without a decision from anyone. A finding that is merely hard is still unambiguous.
-- `needs_human`: it needs a product or design decision. For example: two valid behaviors and the ticket does not say which, or a fix that would change a public contract. Write it so the orchestrator can post it on the PR as it is: include two or three options with trade-offs, and your recommendation.
+- `needs_human`: it needs a product or design decision, and nothing settles it: not the ticket, the spec, the user's earlier decisions, the existing behavior of similar commands, nor a clearly safer option. If one answer is the obvious, safe, conventional one (for example, refusing an invalid action with an error), it is `unambiguous`: name that fix. For example: two valid behaviors and the ticket does not say which, or a fix that would change a public contract. Write it so the orchestrator can post it on the PR as it is: include two or three options with trade-offs, and your recommendation.
 
 ## Verdict
 
@@ -148,4 +152,5 @@ FINDINGS:
    Impact: ...
    Fix: ...
 CHECKS_RUN: <commands and results>
+REVIEWED_AT: <the commit SHA you reviewed>
 ```
