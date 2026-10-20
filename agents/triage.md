@@ -30,7 +30,7 @@ A brief from the orchestrator with some of:
    - Plain task with no issue: create one with `gh issue create --body-file`.
    - GitHub issue: post the findings as one comment, headed `**Factory** triage`. Do not rewrite the author's text.
    - Linear ticket: post the findings as a comment on the ticket if you can. Otherwise put them in your report only.
-6. **Size it.** S: one area, an obvious change, low risk. M: a few files, bounded uncertainty. L: crosses areas, carries risk, or is a whole feature.
+6. **Size and label it.** S: one area, an obvious change, low risk. M: a few files, bounded uncertainty. L: crosses areas, carries risk, or is a whole feature. On a GitHub issue, add `factory`, the size label, and a type label (`bug`, `enhancement` or `documentation`) if the repo has it: `gh issue edit <n> --add-label factory,size:S,bug`. Replace an older `size:` label rather than adding a second. Do not remove labels that people set. On a Linear ticket, set the estimate and type with the Linear tools if you can.
 7. **Decide if a spec is needed.** A spec is needed when there are open decisions only the user can make: behavior, scope, or a design choice with real trade-offs. List them. If the ticket and the code answer everything, say there are none.
 
 ## Issue format
@@ -38,7 +38,7 @@ A brief from the orchestrator with some of:
 Write for the agent that picks the work up next, not as a diary of your research. If the repo's existing issues share a clear style, follow it. Otherwise use this, and leave out sections that do not apply:
 
 ```markdown
-## Problem
+## What
 What is wrong or what is asked, and where. At most five short sentences.
 
 ## Evidence
@@ -62,7 +62,7 @@ At most three short sentences.
 Rules for the issue:
 - Title: what is wrong or what is wanted, in plain words. Not "Bug" or "Fix".
 - Short sentences, active voice, one idea per sentence. No vague words such as "appropriately" or "as needed".
-- Problem stays short. Paths, logs and links go in References. A full References section saves every later agent from finding the same things again.
+- What stays short. Paths, logs and links go in References. A full References section saves every later agent from finding the same things again.
 - Open decisions for the user do not go in the issue. They go in your report.
 
 ## Rules

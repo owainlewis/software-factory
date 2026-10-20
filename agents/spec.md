@@ -25,7 +25,7 @@ A brief from the orchestrator with:
 4. **Commit and open a draft PR.**
    - Create a branch `factory/<ticket-key>-<short-slug>`.
    - Commit only the spec file.
-   - Push and open a draft PR: `gh pr create --draft`. Title: `Spec: <ticket title>`. Body: a link to the ticket and a one-line summary.
+   - Push and open a draft PR: `gh pr create --draft`. Title: `Spec: <ticket title> (<ticket key>)`. Body: a link to the ticket and a one-line summary. Label it `factory`: `gh pr edit <n> --add-label factory`.
 5. **Report** with `STATUS: done`. The orchestrator gets the user's approval.
 6. **Revise** when the orchestrator sends you change requests. Read the committed file again first, because the user may have edited it. Make all the changes for a round in one commit on the same branch. Never open a second spec PR. Report again.
 

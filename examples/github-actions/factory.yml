@@ -1,6 +1,7 @@
 # Runs the software factory on GitHub issues.
 #
-# - Add the label `factory` to an issue to start a run.
+# - Add the label `factory:run` to an issue to start a run. (Not `factory`:
+#   the factory adds that label itself, which would start a second run.)
 # - When the factory needs an answer or an approval, it comments on the issue
 #   and adds `factory:waiting`. Reply on the issue to resume.
 #
@@ -27,7 +28,7 @@ concurrency:
 jobs:
   factory:
     if: >-
-      (github.event_name == 'issues' && github.event.label.name == 'factory') ||
+      (github.event_name == 'issues' && github.event.label.name == 'factory:run') ||
       (github.event_name == 'issue_comment' &&
        !github.event.issue.pull_request &&
        contains(github.event.issue.labels.*.name, 'factory:waiting') &&

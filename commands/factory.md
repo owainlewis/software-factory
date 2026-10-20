@@ -93,6 +93,20 @@ Work can arrive at any stage: a new ticket, a PR that needs review, a PR with re
 
 Confirm that the current directory is a git repo with a GitHub remote and that `gh auth status` succeeds. If not, tell the user what is missing and stop. Create the run file.
 
+Make sure the factory labels exist. Run `gh label list --limit 200 --json name -q '.[].name'` and create only the missing ones. Never edit or recolor a label that already exists.
+
+| Label | Color | Description | Goes on |
+|---|---|---|---|
+| `factory` | `FEF2C0` | Work run by the software factory | Every issue and PR the factory creates or adopts |
+| `factory:waiting` | `FBCA04` | The factory is waiting for a human | The ticket, while a question or approval is open |
+| `size:S` | `C2E0C6` | Small: one area, low risk | The issue, set by triage |
+| `size:M` | `FEF2C0` | Medium: a few files, bounded risk | The issue, set by triage |
+| `size:L` | `F9D0C4` | Large: crosses areas or carries risk | The issue, set by triage |
+
+Create one with `gh label create "<name>" --color <color> --description "<description>"`.
+
+The type label (`bug`, `enhancement` or `documentation`) comes from the repo's own labels. Use one only if it already exists. Do not create type labels.
+
 ### 2. Triage
 
 Triage is the default for a ticket. It checks the ticket against the code, reproduces bugs, finds duplicates, fills in what the ticket is missing and sizes the work. Spawn `triage` with the ticket reference.

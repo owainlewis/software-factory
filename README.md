@@ -57,6 +57,7 @@ The agents run git, `gh` and your test commands many times per run. Without an a
       "Bash(gh issue:*)",
       "Bash(gh pr:*)",
       "Bash(gh api:*)",
+      "Bash(gh label:*)",
       "Bash(gh auth status:*)",
       "Bash(ls:*)",
       "Bash(cat:*)",
@@ -89,9 +90,21 @@ A plain task gets a GitHub issue first. A PR URL starts at the review stage.
 
 Each run writes `.factory/runs/<id>.json` in your repo, with the current stage, the status of each step, and the PR links. The factory writes `.factory/.gitignore` containing `*`, so the folder is never committed. Tools and dashboards can read this file to show progress.
 
+## Labels
+
+The factory creates any of these that are missing, and never changes labels you already have:
+
+| Label | Meaning |
+|---|---|
+| `factory` | On every issue and PR the factory creates or works on |
+| `factory:waiting` | The factory is waiting for you to answer or approve |
+| `size:S`, `size:M`, `size:L` | The size triage gave the work |
+
+It also adds your repo's own `bug`, `enhancement` or `documentation` label when one fits. It does not create those.
+
 ## Run it from GitHub
 
-`examples/github-actions/factory.yml` runs the factory when you add the `factory` label to an issue. In CI there is no chat, so the factory posts questions and approval requests as issue comments, adds the `factory:waiting` label, and stops. Your reply on the issue starts the next run.
+`examples/github-actions/factory.yml` runs the factory when you add the `factory:run` label to an issue. In CI there is no chat, so the factory posts questions and approval requests as issue comments, adds the `factory:waiting` label, and stops. Your reply on the issue starts the next run.
 
 Copy it to `.github/workflows/factory.yml` and add an `ANTHROPIC_API_KEY` secret.
 

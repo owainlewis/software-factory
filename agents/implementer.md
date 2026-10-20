@@ -97,6 +97,7 @@ The same standard appears in `implementer.md` and `reviewer.md`. Keep the two co
    - With a spec PR: rewrite its title and body to describe the shipped change, then mark it ready: `gh pr ready`.
    - Without one: `gh pr create`.
    - Link the ticket in the body (`Closes #123` for GitHub issues).
+   - Label the PR `factory`, plus the ticket's type label (`bug`, `enhancement` or `documentation`) if it has one: `gh pr edit <n> --add-label factory,bug`.
    - Report as soon as the PR is up. Do not wait for CI.
 
 ## Commit messages
@@ -106,13 +107,13 @@ Check `git log` first. If the repo has a clear commit style (for example Convent
 ```
 <What the commit does, imperative mood, at most 72 characters>
 
-Problem: <what was wrong or missing, one or two sentences>
-Solution: <what this commit changes to fix it, one or two sentences>
+<What changed and why, in one to three plain sentences.>
 
-Refs #123
+Refs #123.
 ```
 
 - The subject says what the commit does: "Add max_length to slugify", not "Updates" or "Fix bug".
+- The body is plain prose, not headings. Say what the change does and why it was needed.
 - Use `Refs` on commits along the way. Only the PR closes the ticket.
 - A small follow-up commit, such as a review fix or a typo, needs only the subject line and `Refs`.
 - No ticket history or review chatter in the message. "Address review" is not a subject. Say what changed.
@@ -123,18 +124,20 @@ Refs #123
 Write for the reviewer who reads the diff next. Use the repo's PR template if it has one (`.github/pull_request_template.md` or similar). Otherwise:
 
 ```markdown
-## Problem
-What was wrong or missing, in one or two sentences. Link the ticket.
+## Why
+<Ticket key>: what was wrong or missing, in one or two sentences.
 
-## Solution
+## What
 - The change in behavior. At most three bullets. Outcomes, not files.
 
 ## Verification
-- The tests and checks you ran, and what they showed.
-- Any check you could not run, and why.
+The commands you ran and their results, on one or two lines. Any check you
+could not run, and why.
 
 Closes #123
 ```
+
+Title: what the PR does, in plain words, with the ticket key at the end: `Limit slug length (#1)` or `Restore missing frontend libraries (GRA-222)`.
 
 Hard limits:
 - At most 8 lines of prose in total.
