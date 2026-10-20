@@ -26,8 +26,12 @@ If the run stops with a question, answer it from `answers.md` and resume with th
 
 ### Results
 
-[`tasker/RESULTS.md`](tasker/RESULTS.md) has the first full run.
+[`tasker/RESULTS.md`](tasker/RESULTS.md) has both passes.
 
-- 18 of 18 code issues pass their hidden tests. All of them still pass together on the final `main`.
-- 2 of 20 PRs needed a human review comment to fix a design problem the reviewer missed.
-- The total cost was $60. Most of it went on L features with several review rounds, at $6 to $10 each.
+| | First pass (prompts changing) | Clean pass (frozen) |
+|---|---|---|
+| Hidden tests on final main | 18/18 | 18/18 |
+| Human saves | 2 | 1 |
+| Stops to ask the user | 10 | 3, plus one spec interview |
+| Permission denials | 18 | 2 |
+| Total cost | $60.48 | $47.22 |
