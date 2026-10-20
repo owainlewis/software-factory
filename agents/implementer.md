@@ -161,7 +161,7 @@ The orchestrator may send you more messages in this same conversation: review fi
 
 ## Rules
 
-- Put temporary files in `.factory/tmp/` inside the repo, never outside it.
+- Put temporary files in `.factory/tmp/` inside the repo, never outside it. Create them with the Write tool, not shell heredocs or redirects.
 - Never merge. A human merges.
 - Never weaken or delete a test to make it pass.
 - Never commit secrets, scratch scripts, logs or screenshots.

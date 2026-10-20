@@ -26,7 +26,7 @@ The ticket is the source of truth for the request. Pass its reference to every a
 
 Keep a run file at `.factory/runs/<run-id>.json` in the repo, where `<run-id>` is the ticket key (`gh-123`, `abc-123`) or a short slug for a plain task. Before you write it the first time, create `.factory/.gitignore` containing `*`, so nothing in `.factory/` is ever committed. Do not edit anything under `.git/`.
 
-Put any temporary files (comment bodies, review drafts) in `.factory/tmp/`, never outside the repo. Tell every agent to do the same.
+Put any temporary files (comment bodies, review drafts) in `.factory/tmp/`, never outside the repo. Create them with the Write tool, not shell heredocs or redirects. Tell every agent to do the same.
 
 Set `updated_at` from `date -u +%Y-%m-%dT%H:%M:%SZ`. Do not guess the time.
 
@@ -100,7 +100,7 @@ Make sure the factory labels exist. Run `gh label list --limit 200 --json name -
 | `factory` | `FEF2C0` | Work run by the software factory | Every issue and PR the factory creates or adopts |
 | `factory:waiting` | `FBCA04` | The factory is waiting for a human | The ticket, while a question or approval is open |
 | `size:S` | `C2E0C6` | Small: one area, low risk | The issue, set by triage |
-| `size:M` | `FEF2C0` | Medium: a few files, bounded risk | The issue, set by triage |
+| `size:M` | `FBE38E` | Medium: a few files, bounded risk | The issue, set by triage |
 | `size:L` | `F9D0C4` | Large: crosses areas or carries risk | The issue, set by triage |
 
 Create one with `gh label create "<name>" --color <color> --description "<description>"`.

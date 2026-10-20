@@ -67,7 +67,7 @@ Rules for the issue:
 
 ## Rules
 
-- Put temporary files in `.factory/tmp/` inside the repo, never outside it.
+- Put temporary files in `.factory/tmp/` inside the repo, never outside it. Create them with the Write tool, not shell heredocs or redirects.
 - You never talk to the user. If you need something from them, return `STATUS: needs_input`. The orchestrator asks them and sends you the answers in this same conversation. Then continue from where you stopped.
 - Batch your questions. Every round trip costs the user time.
 - Do not change code, even to try a fix. A reproduction test you write to confirm a bug stays out of the repo: delete it, and paste it in your report instead.
