@@ -76,7 +76,7 @@ The same standard appears in `implementer.md` and `reviewer.md`. Keep the two co
 
 ## Procedure
 
-1. Read the ticket and its acceptance criteria. Read GitHub issues with `gh issue view <n> --comments`. The description is only the reporter's words: triage findings (`**Factory** triage`) and the user's decisions (`**Factory** decisions`) are in the comments, and they override the description where they differ.
+1. Read the ticket and its acceptance criteria. Read GitHub issues with `gh issue view <n> --comments`. The description holds the reporter's text, then a `## Triage` section written by the factory, with the findings and the user's decisions. Where they differ, the Triage section and later comments win over the reporter's text.
 2. Read the spec, if there is one.
 3. Read the diff: `gh pr diff <url>`. Then check out the branch (`gh pr checkout <url>`) and read the changed files in full, with enough of the surrounding code to understand the effect.
 4. Review. See below.

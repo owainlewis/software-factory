@@ -131,7 +131,7 @@ Use the triage report to decide. A spec is worth it when there are open decision
 - No open decisions: skip the spec, and do not stop to ask the user anything. Go straight to implementation.
 - Only stop for a decision when the ticket does not already answer it, a reasonable user could want either answer, and getting it wrong would be costly to undo. Everything else, including edge cases with an obvious default, is an assumption: pass it to the implementer and keep going. The implementer lists at most three, the ones a reviewer is most likely to change, under "Check these choices" in the PR. Put the full list in your handover. The user can change an assumption in review.
 - Open decisions: tell the user in one or two sentences why a spec would help, and ask if they want one. If yes, spawn `spec`.
-- If the user settles the decisions in chat without a spec, post them on the issue as a `**Factory** decisions` comment, so the record lives with the ticket. Pass them to the implementer in its brief.
+- If the user settles the decisions in chat without a spec, add them to the issue description: a `### Decisions` list at the end of the `<!-- factory:triage -->` section (re-read the description first, and change nothing above the marker). Post a one-line comment saying the decisions were recorded. Pass them to the implementer in its brief.
 - Relay the spec agent's questions as described above.
 - When the spec agent returns `STATUS: done`, it has opened a draft PR. Comment the PR link on the issue, if there is one. Ask the user to approve the spec. Do not continue until they approve, in chat or on the PR.
 - If the user asks for changes, send them to the same spec agent with SendMessage.

@@ -33,8 +33,17 @@ A brief from the orchestrator with some of:
    - If you find a separate problem along the way, check the same list before you suggest a new issue. Name the existing issue if there is one.
 5. **Record it.** Unless told `research only`, write the findings in the issue format below:
    - Plain task with no issue: create one with `gh issue create --body-file`.
-   - GitHub issue: post the findings as one comment, headed `**Factory** triage`. Do not rewrite the author's text.
-   - Linear ticket: post the findings as a comment on the ticket if you can. Otherwise put them in your report only.
+   - GitHub issue: put the findings in the description, below the reporter's text. Read the description again right before you write, so you do not overwrite a recent edit. Keep everything above the marker exactly as it is, then add:
+
+     ```markdown
+     ---
+     <!-- factory:triage -->
+     ## Triage
+     <the issue format below, with headings one level down: ### What, ### Evidence, ...>
+     ```
+
+     If a `<!-- factory:triage -->` section is already there, replace it instead of adding a second one. Save it with `gh issue edit <n> --body-file`. Then post a one-line comment: `**Factory** triage: size S. Findings are in the description.`
+   - Linear ticket: do the same in the ticket description if the Linear tools allow it. Otherwise post the findings as a comment.
 6. **Size and label it.** S: one area, an obvious change, low risk. M: a few files, bounded uncertainty. L: crosses areas, carries risk, or is a whole feature. On a GitHub issue, add `factory`, the size label, and a type label (`bug`, `enhancement` or `documentation`) if the repo has it: `gh issue edit <n> --add-label factory,size:S,bug`. Replace an older `size:` label rather than adding a second. Do not remove labels that people set. On a Linear ticket, set the estimate and type with the Linear tools if you can.
 7. **Decide if a spec is needed.** A spec is needed when there are open decisions only the user can make: behavior, scope, or a design choice with real trade-offs. List them. If the ticket and the code answer everything, say there are none.
 

@@ -19,7 +19,7 @@ A brief from the orchestrator with:
 
 ## Procedure
 
-1. **Read.** Read the ticket, the triage findings and the code they point to. Read GitHub issues with `gh issue view <n> --comments`. The description is only the reporter's words: triage findings (`**Factory** triage`) and the user's decisions (`**Factory** decisions`) are in the comments, and they override the description where they differ. Do not ask for anything the ticket or the code already answers.
+1. **Read.** Read the ticket, the triage findings and the code they point to. Read GitHub issues with `gh issue view <n> --comments`. The description holds the reporter's text, then a `## Triage` section written by the factory, with the findings and the user's decisions. Where they differ, the Triage section and later comments win over the reporter's text. Do not ask for anything the ticket or the code already answers.
 2. **Interview.** Collect every open question first, then send them all in one batch. Return `STATUS: needs_input` with the questions. The orchestrator asks the user and sends the answers back to you in this conversation. Ask a second round only for questions the first answers created.
 3. **Write the spec** in `specs/<ticket-key>-<short-slug>.md`. Follow the template below. Size it to the work: a small change needs a short spec that is mostly validation criteria.
 4. **Commit and open a draft PR.**

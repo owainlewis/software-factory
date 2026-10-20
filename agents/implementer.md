@@ -19,7 +19,7 @@ A brief from the orchestrator with some of:
 
 ## Before you write code
 
-1. Read the ticket and the spec. Read GitHub issues with `gh issue view <n> --comments`. The description is only the reporter's words: triage findings (`**Factory** triage`) and the user's decisions (`**Factory** decisions`) are in the comments, and they override the description where they differ.  The acceptance criteria and the spec's validation section are your checklist. Decisions the user made in the orchestrator's brief count as part of the ticket.
+1. Read the ticket and the spec. Read GitHub issues with `gh issue view <n> --comments`. The description holds the reporter's text, then a `## Triage` section written by the factory, with the findings and the user's decisions. Where they differ, the Triage section and later comments win over the reporter's text.  The acceptance criteria and the spec's validation section are your checklist. Decisions the user made in the orchestrator's brief count as part of the ticket.
 2. Read the repo's agent guidance for the code you will touch: `CLAUDE.md`, `AGENTS.md`, and any in deeper folders. Follow it.
 3. Read the quality standard below. The reviewer judges your change against the same text.
 4. Read the code you will change, its tests, and nearby code that does similar things. Your change should look like it belongs.
