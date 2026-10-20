@@ -2,7 +2,9 @@
 # Run the visible and hidden tests against a factory PR, then show its labels and commits.
 # Usage: grade.sh <issue-number> <pr-number>
 HERE=$(cd "$(dirname "$0")" && pwd)
-cd "$HERE/work" || exit 1
+# The checkout must live outside the plugin folder: Claude Code refuses edits inside a loaded plugin.
+WORK=${EVAL_WORK:-${TMPDIR:-/tmp}/software-factory-eval}
+cd "$WORK" || exit 1
 N=$(printf "%02d" "$1")
 git fetch -q origin && git checkout -q --detach "origin/$(gh pr view "$2" --json headRefName -q .headRefName)" || exit 1
 echo "== visible tests"; python3 -m unittest discover -s tests 2>&1 | tail -1

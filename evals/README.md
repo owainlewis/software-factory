@@ -20,7 +20,9 @@ evals/tasker/run.sh r01 "/software-factory:factory https://github.com/you/factor
 evals/tasker/grade.sh 1 <pr-number>
 ```
 
-If the run stops with a question, answer it from `answers.md` and resume with the session id it printed: `run.sh r01b "<answer>" <session-id>`. Merge each PR that passes before the next run, so later issues build on earlier ones. At the end, copy every hidden test into `work/tests/` and run them together, to catch a later PR breaking an earlier one.
+The checkout goes in `$EVAL_WORK` (default `$TMPDIR/software-factory-eval`). It must be outside this repo, because Claude Code refuses edits inside a loaded plugin's folder.
+
+If the run stops with a question, answer it from `answers.md` and resume with the session id it printed: `run.sh r01b "<answer>" <session-id>`. Merge each PR that passes before the next run, so later issues build on earlier ones. At the end, copy every hidden test into the checkout's `tests/` and run them together, to catch a later PR breaking an earlier one.
 
 ### Results
 

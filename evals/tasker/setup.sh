@@ -3,8 +3,9 @@
 # Usage: setup.sh <owner/repo>
 set -e
 HERE=$(cd "$(dirname "$0")" && pwd)
+# The checkout must live outside the plugin folder: Claude Code refuses edits inside a loaded plugin.
+WORK=${EVAL_WORK:-${TMPDIR:-/tmp}/software-factory-eval}
 REPO=${1:?usage: setup.sh owner/repo}
-WORK="$HERE/work"
 rm -rf "$WORK" && cp -R "$HERE/seed" "$WORK" && cd "$WORK"
 git init -q -b main && git add -A && git commit -qm "Initial tasker"
 gh repo create "$REPO" --private --source . --push --description "Software Factory eval: tasker"
