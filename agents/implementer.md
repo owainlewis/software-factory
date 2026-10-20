@@ -123,28 +123,55 @@ Refs #123.
 
 ## PR description
 
-Write for the reviewer who reads the diff next. Use the repo's PR template if it has one (`.github/pull_request_template.md` or similar). Otherwise:
+A reviewer should understand the PR in ten seconds, before they open the diff. Use the repo's PR template if it has one (`.github/pull_request_template.md` or similar). Otherwise:
 
 ```markdown
 ## Why
-<Ticket key>: what was wrong or missing, in one or two sentences.
+<Ticket key>: the problem, in one plain sentence.
 
 ## What
-- The change in behavior. At most three bullets. Outcomes, not files.
+- What a user or caller now sees, one outcome per bullet. At most three.
 
 ## Verification
-The commands you ran and their results, on one or two lines. Any check you
-could not run, and why.
+The commands you ran and what they showed, on one line.
+One line on the real check you did by hand, if any.
 
 Closes #123
 ```
 
-Title: what the PR does, in plain words, with the ticket key at the end: `Limit slug length (#1)` or `Restore missing frontend libraries (GRA-222)`.
+Add one more section only when it applies:
 
-Hard limits:
-- At most 8 lines of prose in total.
-- No file lists, no symbol lists, no story of how you built it. The diff shows the files.
-- Size it to the change. A one-line fix gets a sentence per section.
+```markdown
+## Check these choices
+- A choice the ticket left open that the reviewer may want to change. At most three, one short sentence each.
+```
+
+An example of the right size and tone:
+
+```markdown
+## Why
+#12: `tasker list` got slower with every task, because it loaded each task's labels with a separate query.
+
+## What
+- `tasker list`, `search` and `label` now load all labels in one query, so they stay fast with thousands of tasks.
+- Output is unchanged.
+
+## Verification
+`python3 -m unittest discover -s tests` (53 passed) and the doctests pass.
+On a 16,000-task database, `tasker list` went from 162 ms to 77 ms with identical output.
+
+Closes #12
+```
+
+Rules:
+- Write for someone who has not read the ticket. Plain words, short sentences, no semicolons.
+- Describe behavior, not implementation. Column names, migration numbers, helper names, error codes and file lists belong in the diff. Mention a schema change or a new public interface in a few words ("adds a database migration") only because the reviewer must know.
+- One idea per bullet. If a bullet needs a parenthesis or a second sentence, split it or cut it.
+- Verification names commands and results. Do not explain how you designed the tests.
+- Leave out review history, rejected alternatives and edge-case catalogues. The issue and the review threads hold them.
+- At most 8 lines of prose, not counting headings and `Closes`. Re-read it before you post: if it reads like a changelog of internals, rewrite it.
+
+Title: what the PR does, in plain words, with the ticket key at the end: `Limit slug length (#1)` or `Restore missing frontend libraries (GRA-222)`.
 
 ## Comments and replies
 
@@ -158,7 +185,7 @@ The orchestrator may send you more messages in this same conversation: review fi
 - For each finding: fix it, or say in your report why you did not.
 - Verify again and redo the self-review on the new diff.
 - If a finding came from a comment on the PR, reply in that thread with the commit that fixed it, and resolve the thread. Leave findings you did not act on unresolved, with a reply saying why.
-- Update the PR description if the change in behavior moved.
+- Update the PR description only if the behavior it describes changed. Keep it within the same limits. Do not add a review history.
 - Report again.
 
 ## Rules

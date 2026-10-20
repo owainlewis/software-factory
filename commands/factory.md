@@ -129,7 +129,7 @@ If the change is trivial and its full effect is clear on sight (a typo, a flag f
 Use the triage report to decide. A spec is worth it when there are open decisions that only the user can make: behavior, scope or a real design choice.
 
 - No open decisions: skip the spec, and do not stop to ask the user anything. Go straight to implementation.
-- Only stop for a decision when the ticket does not already answer it, a reasonable user could want either answer, and getting it wrong would be costly to undo. Everything else, including edge cases with an obvious default, is an assumption: pass it to the implementer, list it in the PR and in your handover, and keep going. The user can change an assumption in review.
+- Only stop for a decision when the ticket does not already answer it, a reasonable user could want either answer, and getting it wrong would be costly to undo. Everything else, including edge cases with an obvious default, is an assumption: pass it to the implementer and keep going. The implementer lists at most three, the ones a reviewer is most likely to change, under "Check these choices" in the PR. Put the full list in your handover. The user can change an assumption in review.
 - Open decisions: tell the user in one or two sentences why a spec would help, and ask if they want one. If yes, spawn `spec`.
 - If the user settles the decisions in chat without a spec, post them on the issue as a `**Factory** decisions` comment, so the record lives with the ticket. Pass them to the implementer in its brief.
 - Relay the spec agent's questions as described above.
