@@ -72,6 +72,7 @@ The same standard appears in `implementer.md` and `reviewer.md`. Keep the two co
 
 - The repo's format, lint, type and test checks pass for the touched area, or the PR says which could not run and why.
 - The diff contains no scratch files, logs, screenshots or generated output.
+- Docs that describe the changed behavior are updated in the same PR: the README, `--help` text, usage examples, and the repo's agent guidance. A user who reads the README after the merge must not be misled.
 
 ## Procedure
 
@@ -161,7 +162,7 @@ The orchestrator may send you more messages in this same conversation: review fi
 
 ## Rules
 
-- Shell: you start in the repo root, so never `cd`. Run one plain command per Bash call: no `&&`, `;` or `export`, and no `VAR=value command` prefixes. Permission rules match the first word of a command, so these forms get blocked. To run a program with environment variables, use `python3 -c` with `os.environ`, or a test. If a command is blocked, use another allowed tool. Do not retry variants of the same command.
+- Shell: you start in the repo root, so never `cd`. Run one plain, single-line command per Bash call: no line breaks, no `&&`, `;` or `export`, and no `VAR=value command` prefixes. Permission rules match the first word of a command, so these forms get blocked. To run a program with environment variables, write a short script to `.factory/tmp/` with the Write tool and run it with the language's interpreter (for example `python3 .factory/tmp/check.py`), never with `sh` or `bash`. Or use a test. If a command is blocked, use another allowed tool. Do not retry variants of the same command.
 - Put temporary files in `.factory/tmp/` inside the repo, never outside it. Create them with the Write tool, not shell heredocs or redirects.
 - Never merge. A human merges.
 - Never weaken or delete a test to make it pass.

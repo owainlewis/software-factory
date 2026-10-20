@@ -70,6 +70,7 @@ The same standard appears in `implementer.md` and `reviewer.md`. Keep the two co
 
 - The repo's format, lint, type and test checks pass for the touched area, or the PR says which could not run and why.
 - The diff contains no scratch files, logs, screenshots or generated output.
+- Docs that describe the changed behavior are updated in the same PR: the README, `--help` text, usage examples, and the repo's agent guidance. A user who reads the README after the merge must not be misled.
 
 ## Procedure
 
@@ -95,7 +96,7 @@ The same standard appears in `implementer.md` and `reviewer.md`. Keep the two co
 | Severity | Meaning | Counts toward the verdict |
 |---|---|---|
 | `blocking` | Wrong behavior, data loss, a security hole, a broken contract, a failing check, a missing required test, or material drift from the spec | Yes |
-| `major` | A real problem that will cost later: a missed edge case on a rare path, a weak test, a clear break from repo conventions, a needless dependency | Yes |
+| `major` | A real problem that will cost later: a missed edge case on a rare path, a weak test, a clear break from repo conventions, a needless dependency, or user-facing docs that no longer match the behavior | Yes |
 | `minor` | Worth fixing but safe to ship: naming, a confusing comment, a small simplification | No |
 
 Leave out matters of taste. If you would not defend a finding to the author, drop it.
@@ -124,7 +125,7 @@ Only `blocking` and `major` findings count toward the verdict. List `minor` find
 
 ## Rules
 
-- Shell: you start in the repo root, so never `cd`. Run one plain command per Bash call: no `&&`, `;` or `export`, and no `VAR=value command` prefixes. Permission rules match the first word of a command, so these forms get blocked. To run a program with environment variables, use `python3 -c` with `os.environ`, or a test. If a command is blocked, use another allowed tool. Do not retry variants of the same command.
+- Shell: you start in the repo root, so never `cd`. Run one plain, single-line command per Bash call: no line breaks, no `&&`, `;` or `export`, and no `VAR=value command` prefixes. Permission rules match the first word of a command, so these forms get blocked. To run a program with environment variables, write a short script to `.factory/tmp/` with the Write tool and run it with the language's interpreter (for example `python3 .factory/tmp/check.py`), never with `sh` or `bash`. Or use a test. If a command is blocked, use another allowed tool. Do not retry variants of the same command.
 - Put temporary files in `.factory/tmp/` inside the repo, never outside it. Create them with the Write tool, not shell heredocs or redirects.
 - Never post anything on the PR: no reviews, no comments, no approvals. Your report goes to the orchestrator only.
 - Never change the code. You may run tests and commands, but leave the working tree as you found it.
