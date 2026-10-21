@@ -2,7 +2,7 @@
 
 Give it a ticket. Get back a reviewed pull request.
 
-Software Factory is a Claude Code plugin. It runs a GitHub issue or Linear ticket through a small team of subagents: triage, spec, implement, review. You make the decisions. The agents do the rest, up to a PR that is ready for you to merge.
+Software Factory is a Claude Code plugin. It runs a GitHub issue or Linear ticket through a small team of subagents: triage, spec, implement, review, approve. You make the decisions. Low-risk changes merge on their own. Everything else comes to you as a reviewed PR.
 
 ```
 /software-factory:factory https://github.com/you/repo/issues/42
@@ -10,27 +10,37 @@ Software Factory is a Claude Code plugin. It runs a GitHub issue or Linear ticke
 
 ## How it works
 
-```
-ticket ─▶ triage ─▶ spec? ─▶ implement ─▶ review ─┬─▶ PR ready for you
-                      ▲                       ▲     │
-                   you approve                └─────┘ revise (max 3 rounds)
+```mermaid
+flowchart LR
+    T([Ticket]) --> TR[Triage<br/>Sonnet]
+    TR -->|duplicate or question| A([Answer, stop])
+    TR -->|open decisions| SP[Spec<br/>Opus]
+    SP -->|you approve| B
+    TR -->|clear| B[Build<br/>Opus]
+    B --> R[Review<br/>Opus]
+    R -->|fixes needed, max 3 rounds| B
+    R -->|needs your call| H([Needs human])
+    R -->|accepted| AP{Approver<br/>Opus}
+    AP -->|low risk, all gates pass| M([Merged])
+    AP -->|anything else| H
 ```
 
 | Agent | Job |
 |---|---|
-| **Orchestrator** (`/factory`, your main session) | Reads the ticket, decides which steps the work needs, runs the agents, relays their questions to you |
-| **Triage** | Checks the ticket against the code, reproduces bugs, finds duplicates, sizes the work |
+| **Orchestrator** (`/factory`, your main session) | Reads the ticket, decides which steps the work needs, runs the agents, relays their questions to you, merges when the approver says so |
+| **Triage** | Checks the ticket against the code, reproduces bugs, finds duplicates, sizes the work, writes its findings into the issue |
 | **Spec** | Interviews you about open decisions, writes a spec, opens a draft PR for approval |
-| **Implementer** | Makes the change, proves it with tests, opens the PR, handles review fixes |
-| **Reviewer** | Reviews the PR as a skeptic and reports a verdict. Never posts on GitHub |
+| **Implementer** | Makes the change, proves it with tests, opens the PR. A fresh one handles each review revision |
+| **Reviewer** | Reviews the PR as a skeptic, tries bad input, and reports a verdict. Never posts on GitHub |
+| **Approver** | Decides whether an accepted PR is low risk enough to merge without a person |
 
 What makes it work:
 
 - **One standard on both sides.** The implementer and the reviewer carry the same quality standard in their prompts. No skills, nothing loaded on demand: every rule is always in context.
-- **A fresh reviewer every round.** It sees the PR as it is, not its earlier opinion.
-- **Questions go through you.** Agents stop and return questions. The orchestrator asks you, then resumes the same agent with your answers, so no context is lost.
+- **A fresh reviewer every round.** It sees the PR as it is, not its earlier opinion. Later rounds review only what changed.
+- **Questions go through you.** Agents stop and return questions. The orchestrator asks you, then resumes the same agent with your answers. Small choices become assumptions listed in the PR instead of questions.
 - **Gates are conditional.** Trivial changes skip the spec and the review. Clear tickets skip triage. Every skip is recorded.
-- **Humans merge.** The factory never merges.
+- **Merging is gated.** The approver merges only when review is clean, checks pass, and the change is small and stays out of risky areas: schema, security, input parsing, public interfaces, dependencies, build config and data deletion. A PR that also closes duplicate issues always goes to a person. Anything else gets the `factory:needs-human` label. Add `--no-merge`, or the `factory:no-merge` label on a ticket, to always stop before merging.
 
 ## Install
 
@@ -103,6 +113,8 @@ The factory creates any of these that are missing, and never changes labels you 
 |---|---|
 | `factory` | On every issue and PR the factory creates or works on |
 | `factory:waiting` | The factory is waiting for you to answer or approve |
+| `factory:needs-human` | The approver will not merge this PR without you |
+| `factory:no-merge` | Set it on a ticket to stop the factory from merging it |
 | `size:S`, `size:M`, `size:L` | The size triage gave the work |
 
 It also adds your repo's own `bug`, `enhancement` or `documentation` label when one fits. It does not create those.

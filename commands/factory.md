@@ -1,6 +1,6 @@
 ---
 description: Run a ticket through the software factory, from triage to a reviewed pull request
-argument-hint: A GitHub issue (URL or #123), a Linear ticket (URL or ABC-123), a PR URL, or a plain task
+argument-hint: A GitHub issue (URL or #123), a Linear ticket (URL or ABC-123), a PR URL, or a plain task. Add --no-merge to stop before merging.
 ---
 
 # Software Factory
@@ -51,8 +51,9 @@ Update the file every time the run changes stage or an agent starts or stops. Ot
 }
 ```
 
-- `stage`: `triage`, `spec`, `implement`, `review` or `handover`.
+- `stage`: `triage`, `spec`, `implement`, `review`, `approve` or `handover`.
 - `status` (run and step): `running`, `waiting_on_user`, `done`, `skipped`, `blocked` or `failed`.
+- Add `"merged": true` or `"merged": false` to the run when step 7 finishes.
 - Set the run status to `waiting_on_user` whenever you ask the user something, and back to `running` when they answer.
 - Keep each `summary` to one line.
 
@@ -64,6 +65,7 @@ Update the file every time the run changes stage or an agent starts or stops. Ot
 | `software-factory:spec` | Interview the user (through you), write the spec, open a draft PR | Spec report |
 | `software-factory:implementer` | Make the change, prove it works, open or update the PR | Implementation report |
 | `software-factory:reviewer` | Review the PR as a skeptic. Never posts on GitHub | Review report |
+| `software-factory:approver` | Decide whether an accepted PR is low risk enough to merge without a human | Merge or escalate verdict |
 
 Every agent ends its reply with a report block that starts with `STATUS:`. Read the status before you do anything else.
 
@@ -73,9 +75,9 @@ Every agent ends its reply with a report block that starts with `STATUS:`. Read 
 - Give each agent a `name` when you spawn it, for example `implementer-42`. You need the name to talk to it again.
 - Give each agent a brief: the request in the user's exact words, the issue URL, the spec PR URL, and any decisions the user already made. Pass references, not your own summary of their content. The agent reads the source.
 - **Questions.** If an agent returns `STATUS: needs_input`, it has stopped and is waiting. Ask the user its questions with AskUserQuestion, or in plain text when the questions are open-ended. Then send the answers back to the same agent with SendMessage. Do not start a new agent: the waiting one keeps its context.
-- **Revisions.** Send review findings to the implementer that built the PR, with SendMessage. A new implementer would have to learn the work again.
+- **Revisions.** Send review findings, and review comments from people, to a **fresh** implementer, not the one that built the PR. A resumed builder carries its whole build conversation into every turn, which made revisions the most expensive part of a run. Give the fresh one a revision brief: the PR URL, the ticket, the spec if any, each finding with its `path:line` and suggested fix, and the instruction `revision: work on the existing branch`. Use SendMessage to the builder only to answer a question it asked mid-build.
 - You are the only one who talks to the user. Agents talk to you.
-- Never merge a PR. A human merges.
+- Merge only in step 7, only on the approver's `MERGE`, and never with `--admin` or any flag that bypasses branch protection.
 
 ## Headless runs
 
@@ -92,7 +94,7 @@ Work can arrive at any stage: a new ticket, a PR that needs review, a PR with re
 
 ### 1. Check the repo
 
-Note the current branch (`git branch --show-current`). At handover, check it out again so the user's working copy is where they left it.
+Note the current branch (`git branch --show-current`). At handover, check it out again so the user's working copy is where they left it. If step 7 merged and deleted that branch, stay on the default branch and tell the user.
 
 Confirm that the current directory is a git repo with a GitHub remote and that `gh auth status` succeeds. If not, tell the user what is missing and stop. Create the run file.
 
@@ -102,6 +104,8 @@ Make sure the factory labels exist. Run `gh label list --limit 200 --json name -
 |---|---|---|---|
 | `factory` | `FEF2C0` | Work run by the software factory | Every issue and PR the factory creates or adopts |
 | `factory:waiting` | `FBCA04` | The factory is waiting for a human | The ticket, while a question or approval is open |
+| `factory:needs-human` | `D93F0B` | The factory will not merge this without a person | A PR the approver escalated |
+| `factory:no-merge` | `5319E7` | Never auto-merge this ticket | Set by people on a ticket, never by the factory |
 | `size:S` | `C2E0C6` | Small: one area, low risk | The issue, set by triage |
 | `size:M` | `FBE38E` | Medium: a few files, bounded risk | The issue, set by triage |
 | `size:L` | `F9D0C4` | Large: crosses areas or carries risk | The issue, set by triage |
@@ -116,13 +120,13 @@ Triage is the default for a ticket. It checks the ticket against the code, repro
 
 Skip triage only when the ticket is already clear: it names the cause or the exact change, and it has acceptance criteria. Record why you skipped it.
 
-If triage reports `DUPLICATE_OF`, tell the user which item it duplicates and stop. Do not close or edit either issue: the user decides.
+If triage reports `DUPLICATE_OF`, tell the user which item it duplicates and stop. Do not close or edit either issue: the user decides. If triage reports `ALSO_FIXES`, keep going: pass those issues to the implementer so the PR closes them too, and mention them at handover. A PR that closes extra issues never merges on its own: a person confirms they are duplicates.
 
 For a question ("do we support X?", "how does Y work?"), spawn triage with the instruction `research only, do not create an issue`. Give the user the answer. Stop unless they want it turned into work.
 
 ### 3. Trivial changes
 
-If the change is trivial and its full effect is clear on sight (a typo, a flag flip, a config value), skip the spec and the review. Still use the implementer. Tell the user you skipped them and why.
+If the change is trivial and its full effect is clear on sight (a typo, a flag flip, a config value), skip the spec and the review. Still use the implementer. Tell the user you skipped them and why. Then go to step 7 with `review skipped` and the reason.
 
 ### 4. Spec
 
@@ -146,12 +150,12 @@ If it returns `STATUS: blocked`, tell the user what is blocking it and stop.
 
 ### 6. Review
 
-Review is the default. Skip it only when the change since the last review is obviously safe: copy, comments, a config value or a flag. Judge by risk, not by size. A one-line change to a condition still gets a review.
+Review is the default. Skip it only when the change since the last review is obviously safe: copy, comments, a config value or a flag. Judge by risk, not by size. A one-line change to a condition still gets a review. If you skip it, go to step 7 with `review skipped` and the reason.
 
 Spawn `reviewer` with the PR URL, the issue URL and the spec PR URL. It returns one of three verdicts:
 
 - `accepted`: go to step 7.
-- `revision_needed`: every finding can be fixed without the user. Send the findings to the implementer with SendMessage. When it reports back, spawn a fresh reviewer on the new state of the PR. Stop after 3 review rounds and hand the PR to the user with the open findings.
+- `revision_needed`: every finding can be fixed without the user. Send the findings to a fresh implementer with a revision brief (see Rules). When it reports back, spawn a fresh reviewer on the new state of the PR. Stop after 3 review rounds and hand the PR to the user with the open findings.
 - `human_decision_needed`: at least one finding needs a product or design call. Post only those findings on the PR as one comment review, with the template below. Do not approve or request changes. Send any other findings to the implementer as a normal revision. Tell the user the PR is waiting for their decision.
 
 Template for the posted review (`gh pr review <url> --comment --body-file .factory/tmp/review.md`):
@@ -177,7 +181,21 @@ A fresh reviewer each round is deliberate. It must judge the PR as it is, not re
 
 Round 2 and later are delta reviews. Give the fresh reviewer the previous round's findings and the commit the last review saw (`REVIEWED_AT`). It checks each earlier finding is fixed, reviews the diff since that commit in full, and reads the rest of the PR only where the new changes touch it. This keeps later rounds cheap without trusting the implementer's word.
 
-### 7. Hand over
+### 7. Approve and merge
+
+Check the opt-out first. The user opts out with `--no-merge` in the input, or with the `factory:no-merge` label on the ticket. For a Linear ticket, read its labels through the Linear MCP server.
+
+Spawn `approver` with the PR URL, the ticket, the triage size (or `triage skipped`), the review report from every round (or `review skipped` and why), the `ALSO_FIXES` issues, and `no merge` if the user opted out.
+
+- `MERGE`: merge with the repo's allowed method, squash by default. If the current branch is the PR branch, check out the default branch first, because the merge deletes the branch. Then run `gh pr merge <url> --squash --delete-branch`.
+  - If the merge succeeds, comment on the ticket: `**Factory** merged <PR URL>: <approver's reason>`.
+  - If it fails, do not retry. Handle it as `ESCALATE`, with the error as the reason.
+- `ESCALATE`: add the `factory:needs-human` label to the PR, and post one short comment on it: `**Factory** approver: this needs a human because <reason>.` Do not merge.
+- `WAIT`: checks are still running, or GitHub has not worked out whether the PR can merge. Wait for checks with `gh pr checks <url> --watch` if that is allowed, then ask the approver again. Otherwise treat it as `ESCALATE`.
+
+A PR that stopped for a human decision, or ran out of review rounds, never reaches this step. It goes straight to handover.
+
+### 8. Hand over
 
 Do not end by asking whether to fix `minor` findings. List them under "Follow-ups" in a few words each, and stop. The user will ask if they want them. Ask a question at handover only when something blocks the merge.
 
@@ -186,5 +204,6 @@ Tell the user, in a few lines:
 - What changed and how it was verified, taken from the implementer's report.
 - What the review found and what was fixed.
 - Anything still open.
+- Whether it was merged, or why it needs a human.
 
-Then stop. The user reviews and merges.
+Then stop.

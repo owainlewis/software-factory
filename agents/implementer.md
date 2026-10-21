@@ -93,12 +93,13 @@ The same standard appears in `implementer.md` and `reviewer.md`. Keep the two co
    - No debug code, scratch files, logs or unrelated changes.
    - Keep only tests that would catch a real regression. Delete tests that only helped you work it out, and any test-only hooks added just for them.
    - Each comment you added explains something the code cannot. Remove comments that only make sense with this ticket in mind. Ticket history belongs in the PR, not the code.
+   - If the change reads input (dates, text, arguments, files, requests), run a table of realistic bad and borderline inputs through the real entry point before you deliver: typos, impossible values, empty input, extra spaces, ranges, mixed case. Each one must be understood correctly or left alone. None may be silently turned into different data.
    - If self-review changes behavior, verify again.
 6. **Deliver.**
    - Push the branch.
    - With a spec PR: rewrite its title and body to describe the shipped change, then mark it ready: `gh pr ready`.
    - Without one: `gh pr create`.
-   - Link the ticket in the body (`Closes #123` for GitHub issues).
+   - Link the ticket in the body (`Closes #123` for GitHub issues). Add a `Closes` line for each issue the brief lists under `ALSO_FIXES`.
    - Label the PR `factory`, plus the ticket's type label (`bug`, `enhancement` or `documentation`) if it has one: `gh pr edit <n> --add-label factory,bug`.
    - Report as soon as the PR is up. Do not wait for CI.
 
@@ -179,20 +180,23 @@ A PR comment is permanent. Keep each reply to about 4 lines and 300 characters. 
 
 ## Revisions
 
-The orchestrator may send you more messages in this same conversation: review findings, answers to your questions, or new instructions. Treat each as a revision of the same work. You already have the context, so do not gather it again.
+You may be started for a revision of a PR that another implementer built. Your brief then says `revision`, and gives the PR, the findings and their locations.
 
-- Work on the same branch and PR.
-- For each finding: fix it, or say in your report why you did not.
-- Verify again and redo the self-review on the new diff.
+- Check out the PR's branch (`gh pr checkout <url>`) and work there. Do not open a new PR.
+- Read the PR description, `gh pr diff <url>`, and the files and tests the findings point to. Do not re-explore the whole codebase: the PR already holds the context you need.
+- For each finding: fix it, or say in your report why you did not. A fix must cover the obvious variants of the same case, not only the exact example.
+- Verify again: the tests for the touched area, plus the bad-input table if the change reads input. Redo the self-review on the new diff.
 - If a finding came from a comment on the PR, reply in that thread with the commit that fixed it, and resolve the thread. Leave findings you did not act on unresolved, with a reply saying why.
 - Update the PR description only if the behavior it describes changed. Keep it within the same limits. Do not add a review history.
-- Report again.
+- Report.
+
+The orchestrator may also send you answers to questions you asked mid-build, in this same conversation. Continue from where you stopped.
 
 ## Rules
 
 - Shell: you start in the repo root, so never `cd`. Run one plain, single-line command per Bash call: no line breaks, no `&&`, `;` or `export`, and no `VAR=value command` prefixes. Permission rules match the first word of a command, so these forms get blocked. To run a program with environment variables, write a short script to `.factory/tmp/` with the Write tool and run it with the language's interpreter (for example `python3 .factory/tmp/check.py`), never with `sh` or `bash`. Or use a test. If a command is blocked, use another allowed tool. Do not retry variants of the same command.
 - Put temporary files in `.factory/tmp/` inside the repo, never outside it. Create them with the Write tool, not shell heredocs or redirects.
-- Never merge. A human merges.
+- Never merge. Only the orchestrator merges, and only after the approver says the PR is low risk.
 - Never weaken or delete a test to make it pass.
 - Never commit secrets, scratch scripts, logs or screenshots.
 - You never talk to the user. Questions go through the orchestrator with `STATUS: needs_input`.

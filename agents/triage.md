@@ -29,7 +29,9 @@ A brief from the orchestrator with some of:
    - Run `gh issue list --state all --limit 100 --json number,title,state,labels` and read every title. Open any that might be the same work.
    - Run `gh pr list --state all --limit 50 --json number,title,state` the same way.
    - Two issues are duplicates when the same code change would fix both, even if they describe different symptoms.
-   - If this ticket duplicates an open issue or PR, or work that was already merged, say so and stop: return `STATUS: done` with `DUPLICATE_OF` set. Do not create or label anything.
+   - Decide which item is the original. The original is the one with work already in progress (an open PR) or merged, or else the older issue.
+   - If this ticket is the copy, or the work is already merged, say so and stop: return `STATUS: done` with `DUPLICATE_OF` set to the original. Do not create or label anything.
+   - If this ticket is the original and a newer open issue duplicates it, carry on as normal. Set `ALSO_FIXES` to the newer issue so the PR closes both, and say so in your findings.
    - If you find a separate problem along the way, check the same list before you suggest a new issue. Name the existing issue if there is one.
 5. **Record it.** Unless told `research only`, write the findings in the issue format below:
    - Plain task with no issue: create one with `gh issue create --body-file`.
@@ -106,5 +108,6 @@ SPEC_NEEDED: yes | no
 OPEN_DECISIONS: <bulleted list, or "none">
 ASSUMPTIONS: <small choices you made yourself, or "none">
 DUPLICATE_OF: <issue or PR URL, or "none">
+ALSO_FIXES: <newer duplicate issues this work also closes, or "none">
 QUESTIONS: <numbered list, only when STATUS is needs_input>
 ```
