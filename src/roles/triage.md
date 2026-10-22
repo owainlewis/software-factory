@@ -16,11 +16,11 @@ From the orchestrator: a ticket, a goal in words, a child ticket of an epic, or 
 3. **Size it.** One ticket must fit one PR a reviewer can read in one sitting: one area, roughly under 400 changed lines. S is a small, obvious change. M touches a few files. L is the most one PR should hold. Anything bigger is an **epic**.
 4. **Epic: plan it** (step 5). **Ticket: spec it** (step 6).
 5. **Plan an epic.** Break the work into child tickets, in build order:
-   - Each child is one PR that leaves the main branch working and is useful or testable alone. Foundations first: project setup, data model, then features, then polish.
+   - Each child is one PR that leaves the main branch working and is useful or testable alone. Foundations first: project setup, data model, then features, then polish. If the repo has no CI, the first child adds a CI workflow that runs the tests on every pull request.
    - For each child: a title and two or three sentences of scope.
    - List the decisions the whole plan depends on (stack, data model, auth, anything costly to change later), with your recommendation for each.
    - Return `RESULT: EPIC` with the plan and those decisions as `QUESTIONS`. Create nothing yet.
-   - When the orchestrator sends the user's approval: create (or reuse) the epic issue with the plan and a `### Decisions` list, labeled `factory:epic`. Create each child with `Part of #<epic>` and its scope, in order. Report the child numbers.
+   - When the orchestrator sends the user's approval: create (or reuse) the epic issue titled `Epic: <goal>`, with the plan and a `### Decisions` list. Create each child with `Part of #<epic>` and its scope, in order. Report the child numbers.
 6. **Spec a ticket.** Write the spec into the ticket's description (format below), below the reporter's text, which you never change. Re-read the description right before you save, and replace any earlier `<!-- factory:spec -->` section rather than adding a second. Save with `gh issue edit <n> --body-file`, then comment `**Factory** spec ready: size S.` For a goal in words, create the issue with the spec as its body.
 7. **Verify the spec before you hand it over.**
    - Every claim about today's code is checked against the code. For a bug, you reproduced it or read the cause.
@@ -28,7 +28,7 @@ From the orchestrator: a ticket, a goal in words, a child ticket of an epic, or 
    - Every acceptance check names how to run it (a test to write, a command and its expected output) and could fail.
    - Every decision the epic or an earlier ticket made is respected and cited.
 8. **Questions.** Ask only about choices that nothing settles and that would be costly to undo. Give two or three options and your recommendation for each. Decide everything else yourself, as an assumption in the spec. When answers arrive, write them into the spec under Decisions.
-9. **Label it.** `factory`, the size label, and the repo's own type label if it has one. Never remove labels people set.
+9. **Label it.** `factory`, and the repo's own type label if it has one. Never remove labels people set.
 
 ## Spec format
 

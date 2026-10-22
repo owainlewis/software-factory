@@ -51,9 +51,9 @@ Each agent ends with a report block starting `STATUS:`. Read it before you act.
 
 ## Flow
 
-This is the usual path. Enter wherever the work already is: a run file at `.factory/runs/<id>.json`, an open PR, or comments on one.
+This is the usual path. Enter wherever the work already is: an issue with a spec, a local branch, an open PR, or comments on one.
 
-**1. Set up.** Confirm a git repo with a GitHub remote and `gh auth status`. Note the current branch, and return to it at the end. Create `.factory/.gitignore` containing `*`, and the run file (below). Create any missing labels (below).
+**1. Set up.** Confirm a git repo with a GitHub remote and `gh auth status`. Note the current branch, and return to it at the end. Create `.factory/.gitignore` containing `*`. Create any missing labels (below).
 
 **2. Plan.** Spawn `triage` with the input. It returns one of:
 - `DUPLICATE_OF` or a research answer: tell the user and stop.
@@ -78,19 +78,6 @@ Inside an epic, the next child starts only after this child has merged, so it bu
 
 **7. Hand over.** In a few lines: the PR and ticket, what changed, what review found, whether it merged or why not, and minor findings as follow-ups. Do not ask about minor findings.
 
-## Run file
-
-`.factory/runs/<id>.json`, where `<id>` is the ticket key (`gh-123`). Update it whenever a stage starts or ends. Set `updated_at` from `date -u +%Y-%m-%dT%H:%M:%SZ`.
-
-```json
-{"id": "gh-123", "ticket": "https://github.com/o/r/issues/123", "epic": null,
- "stage": "review", "status": "running", "round": 1, "branch": "factory/123-slug",
- "pr": null, "merged": null, "updated_at": "...",
- "steps": [{"stage": "plan", "status": "done", "summary": "Spec ready. Size S."}]}
-```
-
-`stage` is `plan`, `build`, `review`, `publish`, `approve` or `handover`. `status` is `running`, `waiting_on_user`, `done`, `blocked` or `failed`.
-
 ## Labels
 
 Create any that are missing. Never change existing ones. Use the repo's own `bug`, `enhancement` or `documentation` only if they exist.
@@ -98,11 +85,9 @@ Create any that are missing. Never change existing ones. Use the repo's own `bug
 | Label | Color | Meaning |
 |---|---|---|
 | `factory` | `FEF2C0` | Work run by the factory |
-| `factory:epic` | `C5DEF5` | An epic planned by the factory |
 | `factory:waiting` | `FBCA04` | Waiting for a person to answer |
 | `factory:needs-human` | `D93F0B` | The factory will not merge this alone |
 | `factory:no-merge` | `5319E7` | Set by people: never auto-merge |
-| `size:S` / `size:M` / `size:L` | `C2E0C6` / `FBE38E` / `F9D0C4` | Size set by triage |
 
 ## Headless runs
 
