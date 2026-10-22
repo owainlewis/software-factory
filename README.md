@@ -51,17 +51,28 @@ What the factory promises on every run:
 
 ## Install
 
-In Claude Code:
+**Claude Code:**
 
 ```
 /plugin marketplace add owainlewis/software-factory
 /plugin install software-factory@software-factory
 ```
 
+Then run `/software-factory:factory <issue, PR or goal>`.
+
+**Codex:**
+
+```bash
+codex plugin marketplace add owainlewis/software-factory
+codex plugin add software-factory@software-factory
+```
+
+Then ask Codex to "run the factory on issue #42". In Codex the factory is a skill, and it spawns one subagent per role.
+
 Requirements:
-- The [GitHub CLI](https://cli.github.com) (`gh`), logged in.
-- For UX review: the Claude in Chrome extension, or a headless browser such as Playwright. Without one, page changes are never auto-merged.
-- For Linear tickets: a Linear MCP server connected to Claude Code.
+- The [GitHub CLI](https://cli.github.com) (`gh`), logged in. In Codex, allow network access in the sandbox so `gh` works.
+- For UX review: Claude in Chrome (Claude Code), the Chrome DevTools MCP (Codex), or a headless browser such as Playwright. Without one, page changes are never auto-merged.
+- For Linear tickets: a Linear MCP server.
 
 ## Permissions
 
@@ -135,8 +146,10 @@ Copy it to `.github/workflows/factory.yml` and add an `ANTHROPIC_API_KEY` secret
 
 ## Customise
 
-- **Models**: change `model:` in `plugin/agents/*.md`. Every agent defaults to Opus.
-- **Standards**: the quality standard lives in `plugin/agents/implementer.md`, and the reviewer holds the implementer to it. Your repo's `CLAUDE.md` or `AGENTS.md` always comes first.
+Prompts live in `src/`: `src/orchestrator.md`, `src/roles/*.md`, and a short `src/platform-*.md` for each platform. After editing, run `python3 scripts/build.py` to regenerate `plugin/` for both Claude Code and Codex. `python3 scripts/build.py --check` fails if `plugin/` is out of date.
+
+- **Models**: Claude Code models are set in `src/roles.json`, all Opus by default. Codex subagents use your Codex model with high reasoning effort.
+- **Standards**: the quality standard lives in `src/roles/implementer.md`, and the reviewer holds the implementer to it. Your repo's `CLAUDE.md` or `AGENTS.md` always comes first.
 
 ## Status
 

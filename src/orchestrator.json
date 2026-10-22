@@ -1,0 +1,4 @@
+{
+  "description": "Run a ticket or a goal through the software factory, from plan to reviewed, merged work",
+  "argument-hint": "A GitHub issue (URL or #123), a Linear ticket, a PR URL, or a goal in words. Add --no-merge to stop before merging."
+}

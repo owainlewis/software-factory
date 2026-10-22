@@ -1,0 +1,41 @@
+{
+  "triage": {
+    "description": "Software factory planner. Turns a ticket or a goal into either a verified spec in the ticket, or an epic broken into child tickets. Finds duplicates and answers questions. Spawned by the /factory command.",
+    "claude": {
+      "tools": "Read, Grep, Glob, Bash, WebFetch, Write",
+      "model": "opus",
+      "color": "yellow"
+    }
+  },
+  "implementer": {
+    "description": "Software factory builder. Builds a ticket to its spec on a local branch, proves it with tests, and drafts the PR description. Never pushes. Also handles review revisions. Spawned by the /factory command.",
+    "claude": {
+      "tools": "Read, Grep, Glob, Bash, Write, Edit",
+      "model": "opus",
+      "color": "green"
+    }
+  },
+  "reviewer": {
+    "description": "Software factory reviewer. Reviews a local branch before it is pushed: the code against the spec, the commit messages and the PR description. Reports findings and a verdict. Spawned by the /factory command.",
+    "claude": {
+      "tools": "Read, Grep, Glob, Bash, Write",
+      "model": "opus",
+      "color": "red"
+    }
+  },
+  "ux-reviewer": {
+    "description": "Software factory UX reviewer. Runs the app locally and uses a change in a real browser, the way a user would, before it is pushed. Reports what a user would hit. Spawned by the /factory command for any change to pages or front-end code.",
+    "claude": {
+      "model": "opus",
+      "color": "cyan"
+    }
+  },
+  "approver": {
+    "description": "Software factory approver. After reviewed work is pushed as a PR, decides whether it is low risk enough to merge without a person. Read-only. Spawned by the /factory command.",
+    "claude": {
+      "tools": "Read, Grep, Glob, Bash",
+      "model": "opus",
+      "color": "purple"
+    }
+  }
+}
