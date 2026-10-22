@@ -9,10 +9,15 @@
   "plugins": [
     {
       "name": "software-factory",
-      "source": "./",
-      "description": "Triage, spec, implement and review agents that turn a request into a reviewed pull request.",
+      "source": "./plugin",
+      "description": "Plan, spec, build, review and merge agents that turn a ticket or a goal into reviewed work.",
       "license": "MIT",
-      "keywords": ["agents", "orchestration", "code-review", "github"],
+      "keywords": [
+        "agents",
+        "orchestration",
+        "code-review",
+        "github"
+      ],
       "category": "development"
     }
   ]

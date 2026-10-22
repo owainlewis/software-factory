@@ -1,46 +1,53 @@
 # Software Factory for Claude Code
 
-Give it a ticket. Get back a reviewed pull request.
+Give it a ticket or a goal. Get back reviewed, merged work.
 
-Software Factory is a Claude Code plugin. It runs a GitHub issue or Linear ticket through a small team of subagents: triage, spec, implement, review, approve. You make the decisions. Low-risk changes merge on their own. Everything else comes to you as a reviewed PR.
+Software Factory is a Claude Code plugin. It turns a GitHub issue, a Linear ticket or a goal in words into specified, built, reviewed work, through a team of subagents. You make the decisions that are yours. Low-risk changes merge on their own. Everything else comes to you as a reviewed PR.
 
 ```
 /software-factory:factory https://github.com/you/repo/issues/42
+/software-factory:factory "Build a CRM for a small sales team"
 ```
 
 ## How it works
 
 ```mermaid
 flowchart LR
-    T([Ticket]) --> TR[Triage<br/>Sonnet]
+    T([Ticket or goal]) --> TR[Triage<br/>plan and spec]
     TR -->|duplicate or question| A([Answer, stop])
-    TR -->|open decisions| SP[Spec<br/>Opus]
-    SP -->|you approve| B
-    TR -->|clear| B[Build<br/>Opus]
-    B --> R[Review<br/>Opus]
-    R -->|fixes needed, max 3 rounds| B
-    R -->|needs your call| H([Needs human])
-    R -->|accepted| AP{Approver<br/>Opus}
-    AP -->|low risk, all gates pass| M([Merged])
-    AP -->|anything else| H
+    TR -->|too big| E[Epic plan<br/>you approve]
+    E -->|each child ticket, in order| TR
+    TR -->|spec ready| B[Build locally]
+    B --> R[Review<br/>code, commits, PR text]
+    B --> U[UX review in Chrome<br/>pages only]
+    R -->|fixes, max 3 rounds| B
+    U -->|fixes| B
+    R -->|accepted| P[Push and open PR]
+    U -->|accepted| P
+    P --> AP{Approver}
+    AP -->|low risk| M([Merged])
+    AP -->|anything else| H([Needs you])
 ```
 
 | Agent | Job |
 |---|---|
-| **Orchestrator** (`/factory`, your main session) | Reads the ticket, decides which steps the work needs, runs the agents, relays their questions to you, merges when the approver says so |
-| **Triage** | Checks the ticket against the code, reproduces bugs, finds duplicates, sizes the work, writes its findings into the issue |
-| **Spec** | Interviews you about open decisions, writes a spec, opens a draft PR for approval |
-| **Implementer** | Makes the change, proves it with tests, opens the PR. A fresh one handles each review revision |
-| **Reviewer** | Reviews the PR as a skeptic, tries bad input, and reports a verdict. Never posts on GitHub |
-| **Approver** | Decides whether an accepted PR is low risk enough to merge without a person |
+| **Orchestrator** (`/factory`, your session) | Runs the agents, relays their questions, pushes reviewed work, merges on the approver's word |
+| **Triage** | Plans: finds duplicates, breaks big work into child tickets, and writes a verified spec into every ticket |
+| **Implementer** | Builds to the spec on a local branch, tests first, and drafts the PR description. Never pushes |
+| **Reviewer** | Reviews the local branch before anything is pushed: the code, the commit messages and the PR description |
+| **UX reviewer** | Uses any page change in a real browser (Chrome, or headless) and checks what a user sees |
+| **Approver** | Decides whether pushed, reviewed work is low risk enough to merge without a person |
 
-What makes it work:
+Every agent runs on Opus. Planning is where most of the value is.
 
-- **One standard on both sides.** The implementer and the reviewer carry the same quality standard in their prompts. No skills, nothing loaded on demand: every rule is always in context.
-- **A fresh reviewer every round.** It sees the PR as it is, not its earlier opinion. Later rounds review only what changed.
-- **Questions go through you.** Agents stop and return questions. The orchestrator asks you, then resumes the same agent with your answers. Small choices become assumptions listed in the PR instead of questions.
-- **Gates are conditional.** Trivial changes skip the spec and the review. Clear tickets skip triage. Every skip is recorded.
-- **Merging is gated.** The approver merges only when review is clean, checks pass, and the change is small and stays out of risky areas: schema, security, input parsing, public interfaces, dependencies, build config and data deletion. A PR that also closes duplicate issues always goes to a person. Anything else gets the `factory:needs-human` label. Add `--no-merge`, or the `factory:no-merge` label on a ticket, to always stop before merging.
+What the factory promises on every run:
+
+- **No vague tickets reach the builder.** Every ticket gets a spec in its description: behavior, decisions, assumptions, out of scope, and acceptance checks you can run.
+- **Big work is broken down.** Anything bigger than one reviewable PR becomes an epic with child tickets. You approve the plan once.
+- **Nothing reaches GitHub unreviewed.** Building and review happen locally. Only a commit the reviewer accepted is pushed.
+- **Decisions are made once.** They live in the spec and the epic, and later tickets reuse them.
+- **You are asked only what is yours to decide.** Everything else is a written assumption you can change.
+- **Merging is gated.** The approver merges only small, clean changes that stay out of risky areas: schema, security, input parsing, public interfaces, dependencies, build config and data deletion. Add `--no-merge`, or the `factory:no-merge` label, to always stop before merging.
 
 ## Install
 
@@ -53,6 +60,7 @@ In Claude Code:
 
 Requirements:
 - The [GitHub CLI](https://cli.github.com) (`gh`), logged in.
+- For UX review: the Claude in Chrome extension, or a headless browser such as Playwright. Without one, page changes are never auto-merged.
 - For Linear tickets: a Linear MCP server connected to Claude Code.
 
 ## Permissions
@@ -127,20 +135,16 @@ Copy it to `.github/workflows/factory.yml` and add an `ANTHROPIC_API_KEY` secret
 
 ## Customise
 
-- **Models**: change `model:` in `agents/*.md`. The defaults use Opus for spec, implement and review, and Sonnet for triage.
-- **Standards**: edit the "Quality standard" section in `agents/implementer.md` and `agents/reviewer.md`. Keep the two copies the same. Your repo's `CLAUDE.md` or `AGENTS.md` always comes first.
+- **Models**: change `model:` in `plugin/agents/*.md`. Every agent defaults to Opus.
+- **Standards**: the quality standard lives in `plugin/agents/implementer.md`, and the reviewer holds the implementer to it. Your repo's `CLAUDE.md` or `AGENTS.md` always comes first.
 
 ## Status
 
-v0.1, early. The local GitHub flow is the target for this version. Not done yet:
-
-- Triggers for CI failures and stale PRs
-- Screenshot or video proof for UI changes
-- A live view of runs
+v0.2. Tested on GitHub with local runs. Not yet tested: the GitHub Action, headless mode and Linear.
 
 ## Evals
 
-`evals/tasker/` runs the factory on 20 real issues in a small app and grades each PR with hidden acceptance tests. See [evals/README.md](evals/README.md).
+`evals/` holds two end-to-end evals with hidden acceptance tests: `tasker` (20 issues on an existing app) and `crm` (a 25-ticket app built from scratch, factory against plain Claude Code). See [evals/README.md](evals/README.md).
 
 ## License
 

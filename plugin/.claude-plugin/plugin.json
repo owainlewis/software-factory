@@ -2,13 +2,20 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "software-factory",
   "displayName": "Software Factory",
-  "version": "0.1.0",
-  "description": "A team of Claude Code subagents that takes a request from issue to reviewed pull request: triage, spec, implement, review.",
+  "version": "0.2.0",
+  "description": "A team of Claude Code subagents that turns a ticket or a goal into reviewed, merged work: plan, spec, build, review, UX review, approve.",
   "author": {
     "name": "Owain Lewis",
     "url": "https://github.com/owainlewis"
   },
   "repository": "https://github.com/owainlewis/software-factory",
   "license": "MIT",
-  "keywords": ["agents", "subagents", "orchestration", "code-review", "github", "sdlc"]
+  "keywords": [
+    "agents",
+    "subagents",
+    "orchestration",
+    "code-review",
+    "github",
+    "sdlc"
+  ]
 }

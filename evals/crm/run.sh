@@ -4,7 +4,7 @@
 # The factory arm loads the plugin from $PLUGIN_DIR (default: this repo).
 HERE=$(cd "$(dirname "$0")" && pwd)
 ARM=$1; WORK=$2; TAG=$3; PROMPT=$4; SESSION=$5
-PLUGIN=${PLUGIN_DIR:-$(cd "$HERE/../.." && pwd)}
+PLUGIN=${PLUGIN_DIR:-$(cd "$HERE/../../plugin" && pwd)}
 mkdir -p "$WORK.runs"
 cd "$WORK" || exit 1
 if [ -z "$SESSION" ]; then git checkout -q main && git pull -q; fi

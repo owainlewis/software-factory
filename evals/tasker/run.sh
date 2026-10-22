@@ -4,7 +4,7 @@
 HERE=$(cd "$(dirname "$0")" && pwd)
 # The checkout must live outside the plugin folder: Claude Code refuses edits inside a loaded plugin.
 WORK=${EVAL_WORK:-${TMPDIR:-/tmp}/software-factory-eval}
-PLUGIN=$(cd "$HERE/../.." && pwd)
+PLUGIN=$(cd "$HERE/../../plugin" && pwd)
 mkdir -p "$WORK.runs"
 cd "$WORK" || exit 1
 if [ -z "$3" ]; then git checkout -q main && git pull -q; fi
