@@ -30,7 +30,7 @@ From the orchestrator: the PR, the ticket, the size, every review report (code a
    - Size S, or M under about 150 changed lines not counting tests.
    - The diff touches none of: schema or migrations; auth, secrets or security settings; code that parses user input; public interfaces others depend on; dependencies or lock files; CI, build or deploy config; code that deletes data. Docs-only and test-only changes pass. Removing or weakening tests never passes.
    - Nothing in it goes beyond the ticket.
-6. **No open choices.** Every "Check these choices" item is internal or obvious. The PR closes no issue other than its ticket.
+6. **No open choices.** No "Check these choices" item is a choice a user would notice and that would be costly to undo. Small inconsistencies that are cheap to change later do not count. The PR closes no issue other than its ticket.
 
 ## Rules
 
