@@ -18,10 +18,11 @@ SRC = ROOT / "src"
 OUT = ROOT / "plugin"
 NOTE = "<!-- Generated from src/ by scripts/build.py. Edit src/, not this file. -->\n\n"
 CODEX_DESCRIPTION = (
-    "Run the software factory: plan a ticket or goal, write a verified spec, build it, "
-    "review it before pushing, and merge low-risk work. Use when asked to run the factory "
-    "on a GitHub issue, Linear ticket, PR or goal."
+    "Run the software factory on one work ticket: write a verified spec, build it, review "
+    "it before pushing, and open a reviewed pull request. Use when asked to run the factory "
+    "on a GitHub issue, Linear ticket or PR."
 )
+GENERATED_DIRS = [OUT / "agents", OUT / "codex" / "skills" / "factory" / "roles"]
 
 
 def frontmatter(fields: dict) -> str:
@@ -48,22 +49,30 @@ def build() -> dict[Path, str]:
     )
 
     codex = orchestrator.replace("{{PLATFORM}}", (SRC / "platform-codex.md").read_text())
-    codex = codex.replace("The input: $ARGUMENTS", "The input: the ticket, PR or goal the user gave you.")
+    codex = codex.replace("The input: $ARGUMENTS", "The input: the ticket or PR the user gave you.")
     files[OUT / "codex" / "skills" / "factory" / "SKILL.md"] = (
         frontmatter({"name": "factory", "description": CODEX_DESCRIPTION}) + NOTE + codex
     )
     return files
 
 
+def leftovers(files: dict[Path, str]) -> list[Path]:
+    """Generated-looking files that src/ no longer produces, such as a removed role."""
+    return [p for d in GENERATED_DIRS if d.exists() for p in d.glob("*.md") if p not in files]
+
+
 def main() -> int:
     files = build()
     if "--check" in sys.argv:
         stale = [p for p, text in files.items() if not p.exists() or p.read_text() != text]
+        stale += leftovers(files)
         for path in stale:
             print(f"out of date: {path.relative_to(ROOT)}")
         if stale:
             print("Run: python3 scripts/build.py")
         return 1 if stale else 0
+    for path in leftovers(files):
+        path.unlink()
     for path, text in files.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text)

@@ -18,7 +18,7 @@ From the orchestrator: the local branch, the base branch, the ticket (its spec i
 
 ## What to do
 
-1. Read the spec (`gh issue view <n> --comments`), the epic's decisions if any, and the repo's agent guidance (`CLAUDE.md`, `AGENTS.md`, any `REVIEW.md`).
+1. Read the spec (`gh issue view <n> --comments`), any parent issue's decisions if any, and the repo's agent guidance (`CLAUDE.md`, `AGENTS.md`, any `REVIEW.md`).
 2. Read the diff (`git diff <base>...<branch>`) and the changed files in full.
 3. Check out the branch and run the tests and checks for what changed. A claim that tests pass is not proof.
 4. Check the points below. Leave the working tree as you found it.

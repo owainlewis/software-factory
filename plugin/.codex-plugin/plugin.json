@@ -1,25 +1,34 @@
 {
   "name": "software-factory",
-  "version": "0.2.0",
-  "description": "A team of subagents that turns a ticket or a goal into reviewed, merged work: plan, spec, build, review, UX review, approve.",
+  "version": "0.3.0",
+  "description": "Subagents that take one work ticket to a reviewed pull request: verified spec, build, review before push, and a browser check for page changes.",
   "author": {
     "name": "Owain Lewis",
     "url": "https://github.com/owainlewis"
   },
   "repository": "https://github.com/owainlewis/software-factory",
   "license": "MIT",
-  "keywords": ["agents", "subagents", "orchestration", "code-review", "github"],
+  "keywords": [
+    "agents",
+    "subagents",
+    "orchestration",
+    "code-review",
+    "github"
+  ],
   "skills": "./codex/skills/",
   "interface": {
     "displayName": "Software Factory",
-    "shortDescription": "Ticket to reviewed, merged work",
-    "longDescription": "Plans a ticket or goal, breaks big work into child tickets, writes a verified spec, builds it, reviews the code, commits and PR text before anything is pushed, checks pages in a browser, and merges low-risk work.",
+    "shortDescription": "Work ticket to reviewed pull request",
+    "longDescription": "Writes a verified spec into a work ticket, builds it on a local branch, reviews the code, commits and PR text before anything is pushed, and checks page changes in a real browser. Merges only when you ask.",
     "developerName": "Owain Lewis",
     "category": "Coding",
-    "capabilities": ["Read", "Write"],
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
     "defaultPrompt": [
       "Run the factory on issue #42",
-      "Use the factory to build a bookmarks app"
+      "Run the factory on issue #42 and merge it if review passes"
     ]
   }
 }

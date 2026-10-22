@@ -10,7 +10,7 @@
     {
       "name": "software-factory",
       "source": "./plugin",
-      "description": "Plan, spec, build, review and merge agents that turn a ticket or a goal into reviewed work.",
+      "description": "Subagents that take one work ticket to a reviewed pull request: verified spec, build, review before push, and a browser check for page changes.",
       "license": "MIT",
       "keywords": [
         "agents",

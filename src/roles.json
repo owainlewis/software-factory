@@ -1,6 +1,6 @@
 {
   "triage": {
-    "description": "Software factory planner. Turns a ticket or a goal into either a verified spec in the ticket, or an epic broken into child tickets. Finds duplicates and answers questions. Spawned by the /factory command.",
+    "description": "Software factory triage. Checks a work ticket against the code, finds duplicates, and writes a verified spec into the ticket. Stops with a suggested split if the ticket is too big for one PR. Spawned by the /factory command.",
     "claude": {
       "tools": "Read, Grep, Glob, Bash, WebFetch, Write",
       "model": "opus",
@@ -28,14 +28,6 @@
     "claude": {
       "model": "opus",
       "color": "cyan"
-    }
-  },
-  "approver": {
-    "description": "Software factory approver. After reviewed work is pushed as a PR, decides whether it is low risk enough to merge without a person. Read-only. Spawned by the /factory command.",
-    "claude": {
-      "tools": "Read, Grep, Glob, Bash",
-      "model": "opus",
-      "color": "purple"
     }
   }
 }

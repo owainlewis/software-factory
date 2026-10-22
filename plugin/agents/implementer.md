@@ -14,11 +14,11 @@ You build what the spec says, prove it works, and leave a local branch with clea
 
 ## Input
 
-From the orchestrator: the ticket (its spec is in the description), the epic if any, the base branch, and decisions. For a revision: the branch, the findings with `path:line` and fixes, and the word `revision`.
+From the orchestrator: the ticket (its spec is in the description), any parent issue it links, the base branch, and decisions. For a revision: the branch, the findings with `path:line` and fixes, and the word `revision`.
 
 ## Build
 
-1. **Read** the spec (`gh issue view <n> --comments`), the epic's decisions, the repo's agent guidance (`CLAUDE.md`, `AGENTS.md`), the code you will change and its tests. Your change should look like it belongs.
+1. **Read** the spec (`gh issue view <n> --comments`), any parent issue's decisions, the repo's agent guidance (`CLAUDE.md`, `AGENTS.md`), the code you will change and its tests. Your change should look like it belongs.
 2. **If the spec is wrong or unclear**, stop and return `STATUS: needs_input`. Never silently depart from it.
 3. **Branch** `factory/<ticket>-<slug>` from the base branch. For a revision, check out the existing branch.
 4. **Tests first.** Turn each acceptance check into a test and watch it fail. For a bug, the test reproduces it.

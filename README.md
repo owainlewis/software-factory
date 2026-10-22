@@ -1,53 +1,49 @@
-# Software Factory for Claude Code
+# Software Factory
 
-Give it a ticket or a goal. Get back reviewed, merged work.
+Give it a work ticket. Get back a reviewed pull request.
 
-Software Factory is a Claude Code plugin. It turns a GitHub issue, a Linear ticket or a goal in words into specified, built, reviewed work, through a team of subagents. You make the decisions that are yours. Low-risk changes merge on their own. Everything else comes to you as a reviewed PR.
+Software Factory is a plugin for Claude Code and Codex. It takes one GitHub issue or Linear ticket, writes a verified spec into it, builds it, and reviews the work before anything is pushed. You make the decisions that are yours, and you merge.
 
 ```
 /software-factory:factory https://github.com/you/repo/issues/42
-/software-factory:factory "Build a CRM for a small sales team"
+/software-factory:factory #42 --merge
 ```
+
+It executes work tickets. It does not plan projects. A goal like "build a CRM" needs planning into tickets first. If a ticket is too big for one pull request, the factory stops and suggests a split.
 
 ## How it works
 
 ```mermaid
 flowchart LR
-    T([Ticket or goal]) --> TR[Triage<br/>plan and spec]
-    TR -->|duplicate or question| A([Answer, stop])
-    TR -->|too big| E[Epic plan<br/>you approve]
-    E -->|each child ticket, in order| TR
+    T([Ticket]) --> TR[Triage<br/>verified spec]
+    TR -->|duplicate, question or too big| A([Answer, stop])
     TR -->|spec ready| B[Build locally]
     B --> R[Review<br/>code, commits, PR text]
-    B --> U[UX review in Chrome<br/>pages only]
+    B --> U[UX review in a browser<br/>pages only]
     R -->|fixes, max 3 rounds| B
     U -->|fixes| B
     R -->|accepted| P[Push and open PR]
     U -->|accepted| P
-    P --> AP{Approver}
-    AP -->|low risk| M([Merged])
-    AP -->|anything else| H([Needs you])
+    P -->|--merge and checks pass| M([Merged])
+    P --> Y([Yours to merge])
 ```
 
 | Agent | Job |
 |---|---|
-| **Orchestrator** (`/factory`, your session) | Runs the agents, relays their questions, pushes reviewed work, merges on the approver's word |
-| **Triage** | Plans: finds duplicates, breaks big work into child tickets, and writes a verified spec into every ticket |
+| **Orchestrator** (`/factory`, your session) | Runs the agents, relays their questions, pushes reviewed work, merges only if you asked |
+| **Triage** | Checks the ticket against the code, finds duplicates, and writes a verified spec into the ticket |
 | **Implementer** | Builds to the spec on a local branch, tests first, and drafts the PR description. Never pushes |
 | **Reviewer** | Reviews the local branch before anything is pushed: the code, the commit messages and the PR description |
-| **UX reviewer** | Uses any page change in a real browser (Chrome, or headless) and checks what a user sees |
-| **Approver** | Decides whether pushed, reviewed work is low risk enough to merge without a person |
-
-Every agent runs on Opus. Planning is where most of the value is.
+| **UX reviewer** | Uses any page change in a real browser and checks what a user sees |
 
 What the factory promises on every run:
 
+- **One ticket, one pull request.** Too-big tickets stop with a suggested split.
 - **No vague tickets reach the builder.** Every ticket gets a spec in its description: behavior, decisions, assumptions, out of scope, and acceptance checks you can run.
-- **Big work is broken down.** Anything bigger than one reviewable PR becomes an epic with child tickets. You approve the plan once.
 - **Nothing reaches GitHub unreviewed.** Building and review happen locally. Only a commit the reviewer accepted is pushed.
-- **Decisions are made once.** They live in the spec and the epic, and later tickets reuse them.
+- **Decisions are made once.** They live in the spec and any parent issue, and are reused.
 - **You are asked only what is yours to decide.** Everything else is a written assumption you can change.
-- **Merging is gated.** The approver merges only small, clean changes that stay out of risky areas: schema, security, input parsing, public interfaces, dependencies, build config and data deletion. Add `--no-merge`, or the `factory:no-merge` label, to always stop before merging.
+- **You decide what merges.** The factory merges only when you pass `--merge`, review accepted the work, and checks pass.
 
 ## Install
 
@@ -58,7 +54,7 @@ What the factory promises on every run:
 /plugin install software-factory@software-factory
 ```
 
-Then run `/software-factory:factory <issue, PR or goal>`.
+Then run `/software-factory:factory <issue or PR>`.
 
 **Codex:**
 
@@ -116,21 +112,14 @@ Run it from the root of the repo you want to change:
 /software-factory:factory https://linear.app/acme/issue/ENG-123
 /software-factory:factory "Add a --json flag to the export command"
 /software-factory:factory https://github.com/you/repo/pull/57
+/software-factory:factory #42 --merge
 ```
 
-A goal in words gets a GitHub issue first, or an epic if it's too big for one PR. A PR URL starts at the review stage. The factory keeps scratch files in `.factory/`, which it ignores in git.
+A small task in words gets a GitHub issue first. A ticket too big for one PR stops with a suggested split. A PR URL starts at the review stage. With `--merge`, the factory merges once review has accepted the work and checks pass. Without it, the PR is yours to merge. The factory keeps scratch files in `.factory/`, which it ignores in git.
 
 ## Labels
 
-The factory creates any of these that are missing, and never changes labels you already have:
-
-| Label | Meaning |
-|---|---|
-| `factory` | On every issue and PR the factory creates or works on |
-| `factory:needs-human` | The approver will not merge this PR without you |
-| `factory:no-merge` | Set it on a ticket to stop the factory from merging it |
-
-It also adds your repo's own `bug`, `enhancement` or `documentation` label when one fits. It does not create those.
+The factory adds a `factory` label to every issue and PR it works on, creating it if it's missing, plus your repo's own `bug`, `enhancement` or `documentation` label when one fits.
 
 ## Customise
 
