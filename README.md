@@ -153,7 +153,7 @@ Prompts live in `src/`: `src/orchestrator.md`, `src/roles/*.md`, and a short `sr
 
 ## Status
 
-v0.2. Tested on GitHub with local runs. Not yet tested: the GitHub Action, headless mode and Linear.
+v0.2. Tested on GitHub with local runs in both Claude Code and Codex, each installed from its marketplace. Not yet tested: the GitHub Action, headless mode and Linear.
 
 ## Evals
 
