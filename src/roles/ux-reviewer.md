@@ -13,7 +13,7 @@ Use a browser tool that drives a real browser: Claude in Chrome in Claude Code, 
 ## What to do
 
 1. Read the spec, and the repo's README or agent guidance for how to run the app.
-2. Check out the branch. Start the app on localhost in the background with a fresh, throwaway database. If pages need a sign-in, create a test account through the app's own sign-up on localhost. Never use real credentials.
+2. Check out the branch. Start the app on localhost in the background with a fresh, throwaway database. If it needs environment variables, write a short script in `.factory/tmp/` that sets them and starts the server, run it with the language's interpreter, and stop it later by its process id. If pages need a sign-in, create a test account through the app's own sign-up on localhost. Never use real credentials.
 3. Walk every flow in the spec's behavior and acceptance checks, as a user: click, type, submit. Then try what users get wrong: empty fields, bad values, back and refresh, a long name, a double click on submit.
 4. Check each page you touched:
    - The flow completes, and the result is what the spec says.
