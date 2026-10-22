@@ -69,3 +69,28 @@ All 20 issues on one frozen version of the plugin (prompts at `3a78d4e`), in a f
 1. Triage stops on a duplicate even when the ticket being worked is the original (#2 vs #5).
 2. The reviewer did not try obvious bad inputs on a parsing change (#18): impossible dates and spaced time ranges.
 3. A revision after human review is expensive ($5.68 on #18), because the resumed implementer and a fresh reviewer re-read a large context.
+
+# tasker eval: merge-gate run (2026-10-21)
+
+Four issues on the plugin at `84ed681`, the first version with the approver and gated auto-merge, in `factory-tasker-eval-3`. The goal was to see what the approver does, not to repeat a full pass. Each PR that passed was merged by hand before the next run.
+
+| Run | Issue | Hidden | Approver | Rounds | Cost | Denials | Notes |
+|---|---|---|---|---|---|---|---|
+| 1 | next monday | 3/3 | escalate | 1 | $1.37 | 0 | Changes how typed due dates are parsed. Reviewer tried case, spaces and invalid inputs. |
+| 3 | filter precedence | 1/1 | escalate | 1 | $1.33 | 1 | Changes how typed filters are parsed. Reviewer tried 23 filters. A reviewer `list` ran without `TASKER_DB` and used the real `~/.tasker.db`. |
+| 5 | duplicate | n/a | not reached | 0 | $0.51 | 0 | Found #2 is the open original, touched nothing, offered close-as-dup or one PR closing both. |
+| 6 | search | 1/1 | escalate | 1 | $1.38 | 0 | New public command that reads free text, plus an open choice: blank search is an error. |
+
+Total $4.59, 1 denial. Hidden tests 5/5.
+
+## What it showed
+
+- The approver escalated all three PRs, each for a reason its gates name. None was merged by the factory.
+- Every gate other than low risk passed, so the escalations come from gate 5 alone.
+- tasker is a CLI, so almost every ticket changes input parsing or the command line. On this repo the gate is safe but auto-merge never fires. A repo with more internal changes is needed to see a merge.
+- Duplicate handling now follows the original-vs-copy rule: #5 stopped, and #2 is the one to build.
+
+## Open problems found in the merge-gate run
+
+1. Agents can run tasker against the real `~/.tasker.db` when they forget `TASKER_DB`. Probes should always point at a temp database.
+2. Whether input parsing and new CLI commands should always need a person is a policy choice. If not, gate 5 needs a narrower list.
