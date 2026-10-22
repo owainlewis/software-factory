@@ -85,10 +85,5 @@ Create any that are missing. Never change existing ones. Use the repo's own `bug
 | Label | Color | Meaning |
 |---|---|---|
 | `factory` | `FEF2C0` | Work run by the factory |
-| `factory:waiting` | `FBCA04` | Waiting for a person to answer |
 | `factory:needs-human` | `D93F0B` | The factory will not merge this alone |
 | `factory:no-merge` | `5319E7` | Set by people: never auto-merge |
-
-## Headless runs
-
-You are headless when `GITHUB_ACTIONS` is `true` or `FACTORY_HEADLESS` is `1` (check with `printenv`). Nobody answers in chat, so post questions, plan approvals and escalations as one `**Factory** <stage>` comment on the ticket, add `factory:waiting`, and stop. When a run starts on a ticket with `factory:waiting`, read the replies after your last factory comment, remove the label, and continue from that stage.

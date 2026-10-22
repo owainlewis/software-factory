@@ -118,11 +118,7 @@ Run it from the root of the repo you want to change:
 /software-factory:factory https://github.com/you/repo/pull/57
 ```
 
-A plain task gets a GitHub issue first. A PR URL starts at the review stage.
-
-## Run state
-
-Each run writes `.factory/runs/<id>.json` in your repo, with the current stage, the status of each step, and the PR links. The factory writes `.factory/.gitignore` containing `*`, so the folder is never committed. Tools and dashboards can read this file to show progress.
+A goal in words gets a GitHub issue first, or an epic if it's too big for one PR. A PR URL starts at the review stage. The factory keeps scratch files in `.factory/`, which it ignores in git.
 
 ## Labels
 
@@ -131,18 +127,10 @@ The factory creates any of these that are missing, and never changes labels you 
 | Label | Meaning |
 |---|---|
 | `factory` | On every issue and PR the factory creates or works on |
-| `factory:waiting` | The factory is waiting for you to answer or approve |
 | `factory:needs-human` | The approver will not merge this PR without you |
 | `factory:no-merge` | Set it on a ticket to stop the factory from merging it |
-| `size:S`, `size:M`, `size:L` | The size triage gave the work |
 
 It also adds your repo's own `bug`, `enhancement` or `documentation` label when one fits. It does not create those.
-
-## Run it from GitHub
-
-`examples/github-actions/factory.yml` runs the factory when you add the `factory:run` label to an issue. In CI there is no chat, so the factory posts questions and approval requests as issue comments, adds the `factory:waiting` label, and stops. Your reply on the issue starts the next run.
-
-Copy it to `.github/workflows/factory.yml` and add an `ANTHROPIC_API_KEY` secret.
 
 ## Customise
 
@@ -153,7 +141,7 @@ Prompts live in `src/`: `src/orchestrator.md`, `src/roles/*.md`, and a short `sr
 
 ## Status
 
-v0.2. Tested on GitHub with local runs in both Claude Code and Codex, each installed from its marketplace. Not yet tested: the GitHub Action, headless mode and Linear.
+v0.2. Tested on GitHub with local runs in both Claude Code and Codex, each installed from its marketplace. Not yet tested: Linear.
 
 ## Evals
 
