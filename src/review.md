@@ -40,7 +40,7 @@ If the branch has uncommitted changes, the review covers them too: tell the agen
 |---|---|---|---|---|---|
 
 ## Verdict
-<"Ready for a person to approve" if there are no blocking or major findings, otherwise "Fix first: <N> blocking, <N> major".>
+<"Ready, needs <0 | 1 | 2> approvals" if there are no blocking or major findings, otherwise "Fix first: <N> blocking, <N> major".>
 ```
 
-If an agent finds nothing, its part of the table is empty. Keep the report short enough to read in one screen.
+Start with the Risk heading and use only these three sections. If an agent finds nothing, its part of the table is empty. Keep the report short enough to read in one screen.
