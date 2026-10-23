@@ -5,8 +5,9 @@
     python3 scripts/build.py --check   fail if plugin/ is out of date
 
 src/ is the only place to edit prompts. Claude Code gets one subagent per
-role plus a /factory command. Codex gets one `factory` skill whose roles/
-folder holds the role prompts, because Codex plugins cannot ship agents.
+role plus a command per entry point (/factory, /review). Codex gets one
+skill per entry point whose roles/ folder holds the role prompts, because
+Codex plugins cannot ship agents.
 """
 
 import json
@@ -17,12 +18,24 @@ ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "src"
 OUT = ROOT / "plugin"
 NOTE = "<!-- Generated from src/ by scripts/build.py. Edit src/, not this file. -->\n\n"
-CODEX_DESCRIPTION = (
-    "Run the software factory on one work ticket: write a verified spec, build it, review "
-    "it before pushing, and open a reviewed pull request. Use when asked to run the factory "
-    "on a GitHub issue, Linear ticket or PR."
-)
-GENERATED_DIRS = [OUT / "agents", OUT / "codex" / "skills" / "factory" / "roles"]
+# Each entry point is a Claude Code command and a Codex skill: (source, metadata, Codex description).
+ENTRY_POINTS = {
+    "factory": (
+        "orchestrator.md",
+        "orchestrator.json",
+        "Run the software factory on one work ticket: write a verified spec, build it, review "
+        "it before pushing, and open a reviewed pull request. Use when asked to run the factory "
+        "on a GitHub issue, Linear ticket or PR.",
+    ),
+    "review": (
+        "review.md",
+        "review.json",
+        "Review the current branch before pushing: a code review, a security review and a risk "
+        "classification in parallel, combined into one report. Use when asked to review a change "
+        "or a branch.",
+    ),
+}
+GENERATED_DIRS = [OUT / "agents"] + [OUT / "codex" / "skills" / name / "roles" for name in ENTRY_POINTS]
 
 
 def frontmatter(fields: dict) -> str:
@@ -33,26 +46,27 @@ def frontmatter(fields: dict) -> str:
 def build() -> dict[Path, str]:
     """Return every generated file as {path: content}."""
     roles = json.loads((SRC / "roles.json").read_text())
-    orchestrator = (SRC / "orchestrator.md").read_text()
-    meta = json.loads((SRC / "orchestrator.json").read_text())
     files = {}
 
     for name, role in roles.items():
         body = (SRC / "roles" / f"{name}.md").read_text()
         fields = {"name": name, "description": role["description"], **role["claude"]}
         files[OUT / "agents" / f"{name}.md"] = frontmatter(fields) + NOTE + body
-        files[OUT / "codex" / "skills" / "factory" / "roles" / f"{name}.md"] = NOTE + body
+        for skill in ENTRY_POINTS:
+            files[OUT / "codex" / "skills" / skill / "roles" / f"{name}.md"] = NOTE + body
 
-    claude = orchestrator.replace("{{PLATFORM}}", (SRC / "platform-claude.md").read_text())
-    files[OUT / "commands" / "factory.md"] = (
-        frontmatter({"description": meta["description"], "argument-hint": meta["argument-hint"]}) + NOTE + claude
-    )
-
-    codex = orchestrator.replace("{{PLATFORM}}", (SRC / "platform-codex.md").read_text())
-    codex = codex.replace("The input: $ARGUMENTS", "The input: the ticket or PR the user gave you.")
-    files[OUT / "codex" / "skills" / "factory" / "SKILL.md"] = (
-        frontmatter({"name": "factory", "description": CODEX_DESCRIPTION}) + NOTE + codex
-    )
+    for skill, (source, meta_file, codex_description) in ENTRY_POINTS.items():
+        text = (SRC / source).read_text()
+        meta = json.loads((SRC / meta_file).read_text())
+        claude = text.replace("{{PLATFORM}}", (SRC / "platform-claude.md").read_text())
+        files[OUT / "commands" / f"{skill}.md"] = (
+            frontmatter({"description": meta["description"], "argument-hint": meta["argument-hint"]}) + NOTE + claude
+        )
+        codex = text.replace("{{PLATFORM}}", (SRC / "platform-codex.md").read_text())
+        codex = codex.replace("The input: $ARGUMENTS", "The input: what the user gave you.")
+        files[OUT / "codex" / "skills" / skill / "SKILL.md"] = (
+            frontmatter({"name": skill, "description": codex_description}) + NOTE + codex
+        )
     return files
 
 

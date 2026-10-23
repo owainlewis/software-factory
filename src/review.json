@@ -1,0 +1,4 @@
+{
+  "description": "Review the current branch before pushing: a code review, a security review and a risk classification in parallel, combined into one report",
+  "argument-hint": "Optional: a branch, a base, and a description of the change (text, a file or a PR URL)"
+}

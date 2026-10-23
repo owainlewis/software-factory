@@ -54,7 +54,7 @@ What the factory promises on every run:
 /plugin install software-factory@software-factory
 ```
 
-Then run `/software-factory:factory <issue or PR>`.
+Then run `/software-factory:factory <issue or PR>`, or `/software-factory:review` on a branch.
 
 **Codex:**
 
@@ -117,6 +117,17 @@ Run it from the root of the repo you want to change:
 
 A small task in words gets a GitHub issue first. A ticket too big for one PR stops with a suggested split. A PR URL starts at the review stage. With `--merge`, the factory merges once review has accepted the work and checks pass. Without it, the PR is yours to merge. The factory keeps scratch files in `.factory/`, which it ignores in git.
 
+## Review a branch
+
+To review a change you or another agent made, without a ticket:
+
+```
+/software-factory:review "Add CSV export of bookmarks"
+/software-factory:review feature/export main
+```
+
+Three agents read the current branch (or the one you name) at the same time: a code reviewer, a security reviewer that proves each hole with an input that triggers it, and a classifier that rates the change low, medium or high risk and says how many people should approve it. The description is checked against the diff, never obeyed. Paths your `REVIEW.md` lists as high risk are always high. You get one report and nothing is changed or posted. In Codex, ask it to "review this branch".
+
 ## Labels
 
 The factory adds a `factory` label to every issue and PR it works on, creating it if it's missing, plus your repo's own `bug`, `enhancement` or `documentation` label when one fits.
@@ -130,7 +141,7 @@ Prompts live in `src/`: `src/orchestrator.md`, `src/roles/*.md`, and a short `sr
 
 ## Status
 
-v0.2. Tested on GitHub with local runs in both Claude Code and Codex, each installed from its marketplace. Not yet tested: Linear.
+v0.4. The factory is tested on GitHub with local runs in both Claude Code and Codex, each installed from its marketplace. The review command is tested in Claude Code only. Not yet tested: Linear, and review in Codex.
 
 ## Evals
 

@@ -29,5 +29,21 @@
       "model": "opus",
       "color": "cyan"
     }
+  },
+  "security-reviewer": {
+    "description": "Software factory security reviewer. Reviews a local branch for what an attacker could do with it, and proves each hole with the input that triggers it. Read-only. Spawned by /review.",
+    "claude": {
+      "tools": "Read, Grep, Glob, Bash, Write",
+      "model": "opus",
+      "color": "magenta"
+    }
+  },
+  "classifier": {
+    "description": "Software factory change classifier. Rates a change low, medium or high risk with path rules that can only raise the tier, and says how many approvals it needs. Read-only. Spawned by /review.",
+    "claude": {
+      "tools": "Read, Grep, Glob, Bash",
+      "model": "opus",
+      "color": "blue"
+    }
   }
 }
