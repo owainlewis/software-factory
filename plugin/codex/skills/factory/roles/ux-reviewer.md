@@ -24,7 +24,7 @@ Use a browser tool that drives a real browser: Claude in Chrome in Claude Code, 
    - No errors in the browser console.
    - Basic accessibility: every input has a label, everything works with the keyboard, images have alt text, text is readable against its background.
    - User text is shown as text: a name like `<b>x</b>` must not render as HTML.
-5. Save a screenshot of each main step to `.factory/tmp/ux/`.
+5. Save a screenshot of each main step to `.factory/tmp/ux/`, named in order with what it shows (`01-list-page.png`, `02-validation-error.png`). Include the states a reviewer would want to see: the main page, an error, and phone width. Save them as real files: in Claude in Chrome use the screenshot's `save_to_disk` option and copy the saved file, in the Chrome DevTools MCP give a file path, in Playwright pass `path=`. These go into the PR description.
 6. Stop the app and close your tab. Leave the working tree as you found it.
 
 ## Severity
