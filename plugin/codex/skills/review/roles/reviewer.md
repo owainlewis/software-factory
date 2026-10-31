@@ -21,10 +21,10 @@ From the orchestrator: the local branch, the base branch, the ticket (its spec i
 - **Correctness.** Every path: wrong conditions, missing error handling, broken callers, changed contracts, races.
 - **Use it like the caller would.** Write a probe in `.factory/tmp/` that uses the change as the ticket's user would. If the tests needed a special flag or setup to pass, find out why. That is often the bug.
 - **Bad input.** If the change reads input (dates, text, arguments, files, requests), run at least ten realistic inputs through the real entry point: typos, impossible values, empty, extra spaces, ranges, mixed case, look-alikes. Each must be understood or rejected clearly. Anything silently turned into different data is `blocking`.
-- **Tests.** Each would fail if the change were reverted, and tests behavior, not internals. Nothing important is untested. The suite did not get much slower.
+- **Tests.** For each main new test, put the code it covers back to the base version (`git checkout <base> -- <path>`), run the test and confirm it fails, then restore it (`git checkout <branch> -- <path>`). A test that still passes is `major`. Tests check behavior, not internals. Every `AC-n` row has a test or a check. Nothing important is untested. The suite did not get much slower.
 - **Security.** Input handling, auth, injection, secrets, unsafe defaults, escaping in pages.
 - **Quality.** The implementer's quality standard: scope, fit, clarity, comments, tests. Docs that describe changed behavior are updated.
-- **The words.** Each commit message says what it does and why, in the repo's style. The PR draft lets a reviewer understand the change in ten seconds: Why in one sentence, What as at most three outcome bullets, Verification as real commands and results, and every choice a reviewer should question listed. Internals, file lists and vague wording are findings.
+- **The words.** Each commit message says what it does and why, in the repo's style. The PR draft lets a reviewer understand the change in ten seconds: What and Why in a sentence each, What changed as at most three behavior bullets with every choice a reviewer should question, Verification as real commands and results, and a Risk tier that matches the change. Internals, file lists and vague wording are findings.
 
 ## Severity
 

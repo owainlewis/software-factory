@@ -11,6 +11,16 @@ Software Factory is a plugin for Claude Code and Codex. It takes one GitHub issu
 
 It executes work tickets. It does not plan projects. A goal like "build a CRM" needs planning into tickets first. If a ticket is too big for one pull request, the factory stops and suggests a split.
 
+## Where it fits
+
+| Repo | Use it to |
+|---|---|
+| [Blueprint](https://github.com/owainlewis/blueprint) | Plan the work: requirements, a spec per feature, and a plan of small tickets |
+| **Software Factory** (this repo) | Build each ticket into a reviewed pull request, installed as a plugin for Claude Code or Codex |
+| [factory-kit](https://github.com/ai-developer-community/factory-kit) | The same agents and commands as plain files you copy into your repo's `.claude/` folder. Claude Code only, no install |
+
+A spec written with Blueprint's `/spec` can go straight to the factory. Triage checks it against the code and keeps its `AC-n` IDs instead of writing a second one.
+
 ## How it works
 
 ```mermaid
@@ -39,7 +49,7 @@ flowchart LR
 What the factory promises on every run:
 
 - **One ticket, one pull request.** Too-big tickets stop with a suggested split.
-- **No vague tickets reach the builder.** Every ticket gets a spec in its description: behavior, decisions, assumptions, out of scope, and acceptance checks you can run.
+- **No vague tickets reach the builder.** Every ticket gets a spec in its description from one template: problem, behavior, design when it spans modules, decisions, assumptions, an acceptance table you can run, and out of scope.
 - **Nothing reaches GitHub unreviewed.** Building and review happen locally. Only a commit the reviewer accepted is pushed.
 - **Decisions are made once.** They live in the spec and any parent issue, and are reused.
 - **You are asked only what is yours to decide.** Everything else is a written assumption you can change.
@@ -134,14 +144,14 @@ The factory adds a `factory` label to every issue and PR it works on, creating i
 
 ## Customise
 
-Prompts live in `src/`: `src/orchestrator.md`, `src/roles/*.md`, and a short `src/platform-*.md` for each platform. After editing, run `python3 scripts/build.py` to regenerate `plugin/` for both Claude Code and Codex. `python3 scripts/build.py --check` fails if `plugin/` is out of date.
+Prompts live in `src/`: `src/orchestrator.md`, `src/roles/*.md`, and a short `src/platform-*.md` for each platform. Rules shared by every prompt, such as the shell rule, live once in `src/shell.md`. After editing, run `python3 scripts/build.py` to regenerate `plugin/` for both Claude Code and Codex. `python3 scripts/build.py --check` fails if `plugin/` is out of date. To update factory-kit, run `python3 scripts/build.py --kit <path to factory-kit>`.
 
 - **Models**: Claude Code models are set in `src/roles.json`, all Opus by default. Codex subagents use your Codex model with high reasoning effort.
 - **Standards**: the quality standard lives in `src/roles/implementer.md`, and the reviewer holds the implementer to it. Your repo's `CLAUDE.md` or `AGENTS.md` always comes first.
 
 ## Status
 
-v0.4. The factory is tested on GitHub with local runs in both Claude Code and Codex, each installed from its marketplace. The review command is tested in Claude Code only. Not yet tested: Linear, and review in Codex.
+v0.5. The factory is tested on GitHub with local runs in both Claude Code and Codex, each installed from its marketplace. The review command is tested in Claude Code only. Not yet tested: Linear, and review in Codex. The v0.5 changes (the spec template, the Risk section in PR descriptions and the reviewer's revert check) have not been through the evals yet.
 
 ## Evals
 

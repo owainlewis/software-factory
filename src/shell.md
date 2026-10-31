@@ -1,0 +1,1 @@
+- Shell: you start in the repo root. One plain single-line shell command at a time: no `cd`, `&&`, `;`, `export` or `VAR=value` prefixes. To set environment variables, write a short script in `.factory/tmp/` and run it with the language's interpreter (for example `python3 .factory/tmp/run.py`), never with `sh`. Scratch files go in `.factory/tmp/`.
