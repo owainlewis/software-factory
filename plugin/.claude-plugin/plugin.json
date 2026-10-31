@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "software-factory",
   "displayName": "Software Factory",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Subagents that take one work ticket to a reviewed pull request: verified spec, build, review before push, and a browser check for page changes.",
   "author": {
     "name": "Owain Lewis",

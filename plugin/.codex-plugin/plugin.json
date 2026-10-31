@@ -1,6 +1,6 @@
 {
   "name": "software-factory",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Subagents that take one work ticket to a reviewed pull request: verified spec, build, review before push, and a browser check for page changes.",
   "author": {
     "name": "Owain Lewis",
